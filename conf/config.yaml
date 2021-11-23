@@ -1,0 +1,2 @@
+nats:
+  url: nats://3secret@localhost
