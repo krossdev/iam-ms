@@ -16,7 +16,7 @@ func _t(key string, args ...interface{}) string {
 
 // Command line options
 var (
-	configFile = flag.String("c", "./conf/conf.yaml", _t("Configuration `filepath`"))
+	configFile = flag.String("c", "./conf/config.yaml", _t("Configuration `filepath`"))
 	//secureFile = flag.String("s", "", _t("Secure configuration `filepath`"))
 	//addUser    = flag.Bool("adduser", false, _t("Add the first console user"))
 )
