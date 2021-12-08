@@ -8,14 +8,26 @@ import (
 	"github.com/pkg/errors"
 )
 
+// last connnection
 var nc *nats.Conn
 
 // Connect to message broker
-func Connect(url string) error {
-	conn, err := nats.Connect(url, nil)
+func Connect(url string) (err error) {
+	nc, err = nats.Connect(url, nil)
 	if err != nil {
 		return errors.Wrap(err, "nats connect")
 	}
-	nc = conn
 	return nil
+}
+
+// Disconnect from message broker
+func Disconnect() {
+	if nc != nil {
+		nc.Flush()
+		nc.Close()
+	}
+}
+
+func Subscript() {
+	nc.Subscribe("", func(msg *nats.Msg) {})
 }
