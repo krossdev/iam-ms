@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"github.com/krossdev/iam-ms/mss/xlog"
+
 	"github.com/nats-io/nats.go"
 )
 
-var conn *nats.Conn
+var conn *nats.EncodedConn
 
 // connect to message broker
 func connect(servers []string) error {
@@ -27,13 +28,24 @@ func connect(servers []string) error {
 	opts.ReconnectedCB = reconnectedHandler
 	opts.ClosedCB = closedHandler
 
-	nc, err := opts.Connect()
+	c, err := opts.Connect()
 	if err != nil {
 		return err
 	}
-	conn = nc
-	return nil
+	conn, err = nats.NewEncodedConn(c, nats.JSON_ENCODER)
+	return err
 }
+
+// disconnect from message broker
+func disconnect() {
+	conn.Close()
+}
+
+// func subscribeConsoleActions() {
+// 	conn.Subscribe(msc.SubjectConsoleActions, func(msg *nats.Msg) {
+// 		xlog.X.Infof("rcv: %s", msg.Data)
+// 	})
+// }
 
 // nats async error callback
 func asyncErrorHandler(c *nats.Conn, s *nats.Subscription, e error) {

@@ -36,6 +36,9 @@ func Load(path string) (*Configuration, error) {
 		return nil, err
 	}
 	// check required configuration entries
+	if len(config.Log.Path) == 0 {
+		return nil, fmt.Errorf("log.path cannot be empty")
+	}
 	if len(config.Brokers) == 0 {
 		return nil, fmt.Errorf("brokers cannot be empty")
 	}

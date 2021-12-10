@@ -12,12 +12,12 @@ build:
 	go build -ldflags='$(LDFLAGS)' -tags '${TAGS}' -o kiam-ms
 
 # startup development server with default args
-dev:
-	go run -ldflags='$(LDFLAGS)' -tags '${TAGS} dev' . -c .config/config.yaml
+dev: build
+	./kiam-ms -c .config/config.yaml
 
 # startup development server with customized args
 run:
-	go run -ldflags='$(LDFLAGS)' -tags '${TAGS} dev' . $(arg)
+	go run -ldflags='$(LDFLAGS)' -tags '${TAGS}' . -c .config/config.yaml
 
 # run test
 test:
