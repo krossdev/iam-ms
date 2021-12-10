@@ -1,0 +1,26 @@
+# KrossIAM Message service Configuration
+# https://github.com/krossdev/iam-ms/blob/main/LICENSE
+
+# Debug mode or not
+debug: true
+
+# Log parameters
+#
+log:
+  # Where to save log file(it's a path name, not filename)
+  #
+  path: /tmp
+
+  # Airbrake hook configuration, comment to disable it
+  # https://airbrake.io
+  #
+  # 'pid' is project id, it's a integer number, and 'key' is project key,
+  # you can get them from your airbrade account
+  #
+  airbrake:
+    pid: project-id
+    key: project-key
+
+# nats server(s)
+brokers:
+  - nats://localhost:4222
