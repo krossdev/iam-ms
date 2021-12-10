@@ -3,6 +3,5 @@
 //
 package msc
 
-func SendMail() error {
-	return nil
-}
+// semantic versioning, https://semver.org
+const Version = "0.0.1"

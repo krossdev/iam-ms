@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -16,7 +17,13 @@ var (
 	closedHandler            nats.ConnHandler
 )
 
-var conn *nats.Conn
+var conn *nats.EncodedConn
+var logger *logrus.Logger
+
+// set logger
+func SetLogger(l *logrus.Logger) {
+	logger = l
+}
 
 // Must be call before Connect
 func SetAsyncErrorHandler(handler nats.ErrHandler) {
@@ -44,28 +51,33 @@ func Connect(servers []string) error {
 	opts.Timeout = 10 * time.Second
 	opts.PingInterval = 10 * time.Second
 	opts.MaxPingsOut = 3
+	opts.InboxPrefix = "REPLY-TO"
 
 	opts.AsyncErrorCB = asyncErrorHandler
 	opts.DisconnectedErrCB = disconnectedErrorHandler
 	opts.ReconnectedCB = reconnectedHandler
 	opts.ClosedCB = closedHandler
 
-	nc, err := opts.Connect()
+	c, err := opts.Connect()
 	if err != nil {
 		return err
 	}
-	conn = nc
-	return nil
+	conn, err = nats.NewEncodedConn(c, nats.JSON_ENCODER)
+	return err
 }
 
+// MaxPayloadSize return maximum allowed payload size.
+// this size limit is set by nats server, client cannot modify it.
+// before send large message(like email attachment), client may needs to
+// check if the message size is exceed the payload size limit.
 func MaxPayloadSize() int64 {
-	return conn.MaxPayload()
+	return conn.Conn.MaxPayload()
 }
 
 // Disconnect from message broker
 func Disconnect() {
 	if conn != nil {
-		conn.Flush()
+		conn.FlushTimeout(3 * time.Second)
 		conn.Close()
 	}
 }
