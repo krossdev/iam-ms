@@ -2,10 +2,7 @@ module github.com/krossdev/iam-ms/msc
 
 go 1.17
 
-require (
-	github.com/nats-io/nats.go v1.13.1-0.20211122170419-d7c1d78a50fc
-	github.com/pkg/errors v0.9.1
-)
+require github.com/nats-io/nats.go v1.13.1-0.20211122170419-d7c1d78a50fc
 
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
