@@ -10,58 +10,61 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// connection events listener
 var (
-	asyncErrorHandler        nats.ErrHandler
-	disconnectedErrorHandler nats.ConnErrHandler
-	reconnectedHandler       nats.ConnHandler
-	closedHandler            nats.ConnHandler
+	AsyncErrorHandler        nats.ErrHandler
+	DisconnectedErrorHandler nats.ConnErrHandler
+	ReconnectedHandler       nats.ConnHandler
+	DiscoveredServersHandler nats.ConnHandler
+	ClosedHandler            nats.ConnHandler
 )
 
+// encoded connection
 var conn *nats.EncodedConn
-var logger *logrus.Logger
+
+var logger *logrus.Logger = logrus.StandardLogger()
 
 // set logger
 func SetLogger(l *logrus.Logger) {
 	logger = l
 }
 
-// Must be call before Connect
-func SetAsyncErrorHandler(handler nats.ErrHandler) {
-	asyncErrorHandler = handler
-}
-
-func SetDisconnectErrHandler(handler nats.ConnErrHandler) {
-	disconnectedErrorHandler = handler
-}
-
-func SetReconnectHandler(handler nats.ConnHandler) {
-	reconnectedHandler = handler
-}
-
-func SetClosedHandler(handler nats.ConnHandler) {
-	closedHandler = handler
-}
-
 // Connect to message broker
 func Connect(servers []string) error {
+	if len(servers) == 0 {
+		logger.Panic("ms: no servers give to connect")
+	}
 	opts := nats.GetDefaultOptions()
 
+	// connection options
 	opts.Servers = servers
 	opts.Name = "kiam"
 	opts.Timeout = 10 * time.Second
-	opts.PingInterval = 10 * time.Second
-	opts.MaxPingsOut = 3
+	opts.MaxReconnect = -1 // never give up reconnect
 	opts.InboxPrefix = "REPLY-TO"
 
-	opts.AsyncErrorCB = asyncErrorHandler
-	opts.DisconnectedErrCB = disconnectedErrorHandler
-	opts.ReconnectedCB = reconnectedHandler
-	opts.ClosedCB = closedHandler
-
+	// listen connection events
+	if AsyncErrorHandler != nil {
+		opts.AsyncErrorCB = AsyncErrorHandler
+	}
+	if DisconnectedErrorHandler != nil {
+		opts.DisconnectedErrCB = DisconnectedErrorHandler
+	}
+	if ReconnectedHandler != nil {
+		opts.ReconnectedCB = ReconnectedHandler
+	}
+	if DiscoveredServersHandler != nil {
+		opts.DiscoveredServersCB = DiscoveredServersHandler
+	}
+	if ClosedHandler != nil {
+		opts.ClosedCB = ClosedHandler
+	}
+	// connect to broker
 	c, err := opts.Connect()
 	if err != nil {
 		return err
 	}
+	// make a json encoded connection to send/receive data
 	conn, err = nats.NewEncodedConn(c, nats.JSON_ENCODER)
 	return err
 }
