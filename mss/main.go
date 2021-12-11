@@ -42,7 +42,9 @@ func main() {
 		xlog.X.Fatalf("Failed to connect message broker: %v", err)
 	}
 
-	subscribeConsoleActions()
+	if err = subscribeConsoleActions(); err != nil {
+		log.Fatalf("Failed to subscribe console actions")
+	}
 
 	wg := sync.WaitGroup{}
 	wg.Add(1)

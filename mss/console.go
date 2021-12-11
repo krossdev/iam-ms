@@ -21,6 +21,6 @@ func consoleHandler(a *msc.RequestAction) {
 	xlog.X.Infof("recv action: %v", a)
 }
 
-func subscribeConsoleActions() {
-	subscribeAction(msc.SubjectConsoleActions, consoleHandler)
+func subscribeConsoleActions() error {
+	return subscribeActions(msc.SubjectConsoleActions, consoleHandler)
 }
