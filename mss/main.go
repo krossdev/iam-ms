@@ -19,7 +19,6 @@ import (
 // command line options
 var (
 	configFile = flag.String("c", "./config.yaml", "Configuration `filepath`")
-	reload     = flag.Bool("r", false, "Reload server")
 )
 
 func main() {
@@ -57,7 +56,7 @@ func main() {
 		}
 	}()
 
-	xlog.X.Info("Ready, wait for incoming message...")
+	xlog.X.Infof("%d is ready, wait for incoming message...", os.Getpid())
 	wg.Wait()
 }
 
@@ -71,6 +70,8 @@ func load() error {
 	}
 	// setup log
 	xlog.Setup(conf.Debug, &conf.Log)
+
+	// set msc logger
 	msc.SetLogger(xlog.F(xlog.FRealm, "ms"))
 
 	// connect to message border

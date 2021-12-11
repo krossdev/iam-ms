@@ -11,11 +11,11 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
+// json encoded connection
 var conn *nats.EncodedConn
 
 // reconnect to message broker
 func reconnect(servers []string) error {
-	xlog.X.Info("reconnect....")
 	opts := nats.GetDefaultOptions()
 
 	// connection options
@@ -35,7 +35,7 @@ func reconnect(servers []string) error {
 	if err != nil {
 		return err
 	}
-	// disconnect brfore reconnect
+	// disconnect if exist
 	disconnect()
 
 	conn, err = nats.NewEncodedConn(c, nats.JSON_ENCODER)

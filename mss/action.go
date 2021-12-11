@@ -19,48 +19,60 @@ func subscribeActions(subject string, handler nats.Handler) error {
 }
 
 func actionHandler(subject, reply string, a *msc.RequestAction) {
-	logger := xlog.X.WithFields(logrus.Fields{
+	l := xlog.X.WithFields(logrus.Fields{
 		"version": a.Version,
 		"time":    a.Time,
 		"reqid":   a.ReqId,
 		"name":    a.Name,
 	})
-	logger.Infof("receive action %s on %s, reply to %s", a.Name, subject, reply)
+	l.Infof("receive action %s on %s, reply to = %s", a.Name, subject, reply)
 
+	// reply subject(inbox) cannot be empty
+	if len(reply) == 0 {
+		err := fmt.Errorf("missing reply subject")
+		l.WithError(err).Error("request invalid")
+		replyActionWithError(a.ReqId, reply, err, msc.ReplyCodeNoReply)
+	}
+	if err := checkRequestAction(a); err != nil {
+		l.WithError(err).Error("request invalid")
+		replyActionWithError(a.ReqId, reply, err, msc.ReplyCodeNoReply)
+	}
+	replyActionWithOk(a.ReqId, reply)
+
+	l.Infof("action %s done!", a.Name)
+}
+
+// check request action
+func checkRequestAction(a *msc.RequestAction) error {
 	// check request version
 	if err := checkVersion(a.Version); err != nil {
-		logger.WithError(err).Error("version %s incompatable", a.Version)
-		replyActionWithError(a, reply, err, msc.ReplyCodeBadVersion)
-		return
+		return err
 	}
 	// check request time
 	td := time.Since(time.UnixMicro(a.Time))
 	if td < 0 || td > 10*time.Second {
-		err := fmt.Errorf("request time %d invalid", a.Time)
-		logger.WithError(err).Errorf("please check system clock")
-		replyActionWithError(a, reply, err, msc.ReplyCodeBadTime)
+		return fmt.Errorf("request time %d invalid", a.Time)
 	}
-	logger.Infof("response ok to action %s", a.Name)
-	replyActionOk(a, reply)
+	return nil
 }
 
 // response with error
-func replyActionWithError(a *msc.RequestAction, reply string, err error, code int32) {
+func replyActionWithError(reqid string, reply string, err error, code int32) {
 	conn.Publish(reply, &msc.ReplyAction{
 		Version: msc.Version,
 		Time:    time.Now().UnixMicro(),
-		ReqId:   a.ReqId,
+		ReqId:   reqid,
 		Code:    code,
 		Message: err.Error(),
 	})
 }
 
 // response with success
-func replyActionOk(a *msc.RequestAction, reply string) {
+func replyActionWithOk(reqid string, reply string) {
 	conn.Publish(reply, &msc.ReplyAction{
 		Version: msc.Version,
 		Time:    time.Now().UnixMicro(),
-		ReqId:   a.ReqId,
+		ReqId:   reqid,
 		Code:    msc.ReplyCodeOk,
 	})
 }
