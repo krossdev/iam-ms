@@ -13,17 +13,18 @@ import (
 
 var conn *nats.EncodedConn
 
-// connect to message broker
-func connect(servers []string) error {
+// reconnect to message broker
+func reconnect(servers []string) error {
+	xlog.X.Info("reconnect....")
 	opts := nats.GetDefaultOptions()
 
+	// connection options
 	opts.Servers = servers
 	opts.Name = "kiam-ms"
 	opts.Timeout = 10 * time.Second
-	opts.PingInterval = 10 * time.Second
-	opts.MaxPingsOut = 3
 	opts.MaxReconnect = -1 // never give up reconnect
 
+	// connection events
 	opts.AsyncErrorCB = asyncErrorHandler
 	opts.DisconnectedErrCB = disconnectedErrorHandler
 	opts.ReconnectedCB = reconnectedHandler
@@ -34,20 +35,19 @@ func connect(servers []string) error {
 	if err != nil {
 		return err
 	}
+	// disconnect brfore reconnect
+	disconnect()
+
 	conn, err = nats.NewEncodedConn(c, nats.JSON_ENCODER)
 	return err
 }
 
 // disconnect from message broker
 func disconnect() {
-	conn.Close()
+	if conn != nil {
+		conn.Close()
+	}
 }
-
-// func subscribeConsoleActions() {
-// 	conn.Subscribe(msc.SubjectConsoleActions, func(msg *nats.Msg) {
-// 		xlog.X.Infof("rcv: %s", msg.Data)
-// 	})
-// }
 
 // nats async error callback
 func asyncErrorHandler(c *nats.Conn, s *nats.Subscription, e error) {

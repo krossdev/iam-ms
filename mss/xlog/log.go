@@ -23,7 +23,7 @@ var X = logrus.StandardLogger().WithField(FRealm, "ms")
 
 // Setup logger
 func Setup(debug bool, config *config.Log) {
-	var l = logrus.StandardLogger()
+	l := logrus.New()
 
 	l.SetReportCaller(true)
 
