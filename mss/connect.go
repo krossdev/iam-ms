@@ -22,10 +22,12 @@ func connect(servers []string) error {
 	opts.Timeout = 10 * time.Second
 	opts.PingInterval = 10 * time.Second
 	opts.MaxPingsOut = 3
+	opts.MaxReconnect = -1 // never give up reconnect
 
 	opts.AsyncErrorCB = asyncErrorHandler
 	opts.DisconnectedErrCB = disconnectedErrorHandler
 	opts.ReconnectedCB = reconnectedHandler
+	opts.DiscoveredServersCB = discoveredServersHandler
 	opts.ClosedCB = closedHandler
 
 	c, err := opts.Connect()
@@ -58,6 +60,10 @@ func disconnectedErrorHandler(c *nats.Conn, e error) {
 
 func reconnectedHandler(c *nats.Conn) {
 	xlog.X.Info("Message broker reconnected")
+}
+
+func discoveredServersHandler(c *nats.Conn) {
+	xlog.X.Info("Message broker discover new server")
 }
 
 func closedHandler(c *nats.Conn) {

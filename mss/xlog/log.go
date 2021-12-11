@@ -16,17 +16,16 @@ import (
 
 // common field names
 const (
-	FReqID  = "reqid"  // http request id
-	FIP     = "ip"     // http client ip
-	FPath   = "path"   // http request url path
-	FMethod = "method" // http request method
+	FRealm = "realm" // realm
 )
 
-var X = logrus.StandardLogger()
+var X = logrus.StandardLogger().WithField(FRealm, "ms")
 
 // Setup logger
 func Setup(debug bool, config *config.Log) {
-	X.SetReportCaller(true)
+	var l = logrus.StandardLogger()
+
+	l.SetReportCaller(true)
 
 	// Logrus log to file kiam.log
 	rotate_logger := &lumberjack.Logger{
@@ -36,26 +35,27 @@ func Setup(debug bool, config *config.Log) {
 		LocalTime: true,
 	}
 	// log json format
-	X.SetFormatter(&logrus.JSONFormatter{
+	l.SetFormatter(&logrus.JSONFormatter{
 		CallerPrettyfier: func(f *runtime.Frame) (function string, file string) {
 			function = path.Base(f.Function)
 			file = path.Base(f.File) + ":" + strconv.Itoa(f.Line)
 			return
 		},
 	})
-	X.SetOutput(rotate_logger)
+	l.SetOutput(rotate_logger)
 
 	if debug {
-		X.AddHook(newTerminalHook())
-		X.SetLevel(logrus.TraceLevel)
+		l.AddHook(newTerminalHook())
+		l.SetLevel(logrus.TraceLevel)
 	} else {
-		X.SetLevel(logrus.InfoLevel)
+		l.SetLevel(logrus.InfoLevel)
 	}
 
 	// add airbrake hook if enabled
 	if config.Airbrake.Pid != 0 && len(config.Airbrake.Key) > 0 {
-		X.AddHook(newAirbrakeHook(debug, config))
+		l.AddHook(newAirbrakeHook(debug, config))
 	}
+	X = l.WithField(FRealm, "main")
 }
 
 // F is a shortcut of withFields

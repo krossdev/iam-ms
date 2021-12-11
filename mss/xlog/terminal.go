@@ -5,6 +5,7 @@ package xlog
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
@@ -28,15 +29,17 @@ func (h *terminalHook) Fire(entry *logrus.Entry) error {
 		logrus.PanicLevel: color.FgHiRed,
 	}
 	print := color.New(colors[entry.Level]).SprintfFunc()
-	level := print("[%s]", entry.Level.String())
+	level := print("[%s]", strings.ToUpper(entry.Level.String()[:3]))
+
+	realm := color.New(color.FgHiYellow).Sprintf("%-4s", entry.Data[FRealm])
 
 	var message string
 
 	err, ok := entry.Data["error"].(error)
 	if ok {
-		message = fmt.Sprintf("%s %s: %v", level, entry.Message, err)
+		message = fmt.Sprintf("%s %s %s: %v", level, realm, entry.Message, err)
 	} else {
-		message = fmt.Sprintf("%s %s", level, entry.Message)
+		message = fmt.Sprintf("%s %s %s", level, realm, entry.Message)
 	}
 	_, err = fmt.Println(message)
 	return err

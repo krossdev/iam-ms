@@ -35,7 +35,7 @@ func main() {
 	xlog.Setup(conf.Debug, &conf.Log)
 
 	// msc logger
-	msc.SetLogger(xlog.X)
+	msc.SetLogger(xlog.F(xlog.FRealm, "ms"))
 
 	// connect to message border
 	if err = connect(conf.Brokers); err != nil {
