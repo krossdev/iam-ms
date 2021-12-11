@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,6 +36,7 @@ type ReplyAction struct {
 // server response code
 const (
 	ReplyCodeOk         = 0
+	ReplyCodeNoReply    = 100
 	ReplyCodeBadVersion = 101
 	ReplyCodeBadTime    = 102
 )
@@ -44,39 +46,56 @@ func sendActionRequest(q *RequestAction) (interface{}, error) {
 	var reply ReplyAction
 
 	if len(q.Name) == 0 {
-		logger.Panicf("ms: request action missing name")
+		logger.Panicf("request action missing name")
 	}
 	if len(q.Subject) == 0 {
-		logger.Panicf("ms: request action missing subject")
+		logger.Panicf("request action missing subject")
 	}
 	q.Version = Version
 	q.Time = time.Now().UnixMicro()
 	q.ReqId = strings.ToLower(strings.ReplaceAll(uuid.NewString(), "-", ""))
 
-	log := logger.WithFields(logrus.Fields{
+	l := logger.WithFields(logrus.Fields{
 		"version": q.Version,
 		"time":    q.Time,
 		"reqid":   q.ReqId,
 		"name":    q.Name,
 	})
-	log.Infof("ms: send action %s to %s", q.Name, q.Subject)
+	l.Tracef("action %s send to %s", q.Name, q.Subject)
 
 	// send the request to broker
 	err := conn.Request(q.Subject, q, &reply, 10*time.Second)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "request error")
+	}
+	if err = checkReplyAction(&reply); err != nil {
+		return nil, errors.Wrap(err, "reply invalid")
 	}
 	// reqid must match
 	if reply.ReqId != q.ReqId {
-		err = fmt.Errorf("ms: action reqid dismatch, '%s' vs '%s'", reply.ReqId, q.ReqId)
+		err = fmt.Errorf("reply reqid '%s' dismatch to '%s'", reply.ReqId, q.ReqId)
 		return nil, err
 	}
-	log.WithField("code", reply.Code).Infof("receive reply %s", reply.ReqId)
+	dt := reply.Time - q.Time
+
+	l.WithField("code", reply.Code).Tracef(
+		"action %s reply with code %d, latency %fms",
+		q.Name, reply.Code, float64(dt/1000),
+	)
 
 	if reply.Code != ReplyCodeOk {
-		err = fmt.Errorf("%s", reply.Message)
-		return nil, err
+		return nil, fmt.Errorf("%s", reply.Message)
 	}
-	logger.Infof("reply: %+v\n", reply)
 	return &reply, nil
+}
+
+// check reply fields
+func checkReplyAction(r *ReplyAction) error {
+	if len(r.Version) == 0 {
+		return fmt.Errorf("missing version")
+	}
+	if len(r.ReqId) == 0 {
+		return fmt.Errorf("missing reqid")
+	}
+	return nil
 }

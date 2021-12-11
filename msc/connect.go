@@ -22,17 +22,17 @@ var (
 // encoded connection
 var conn *nats.EncodedConn
 
-var logger *logrus.Logger = logrus.StandardLogger()
+var logger = logrus.StandardLogger().WithField("realm", "ms")
 
 // set logger
-func SetLogger(l *logrus.Logger) {
-	logger = l
+func SetLogger(e *logrus.Entry) {
+	logger = e
 }
 
 // Connect to message broker
 func Connect(servers []string) error {
 	if len(servers) == 0 {
-		logger.Panic("ms: no servers give to connect")
+		logger.Panic("no servers give to connect")
 	}
 	opts := nats.GetDefaultOptions()
 
