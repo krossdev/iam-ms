@@ -29,8 +29,8 @@ func checkVersion(version string) error {
 			"version incompatible, expect %v, got %v", msc.Version, version,
 		)
 	}
-	// minor version must equal
-	if rv.Minor != lv.Minor {
+	// minor version must equal if major version is 0
+	if rv.Major == 0 && rv.Minor != lv.Minor {
 		return fmt.Errorf(
 			"version incompatible, expect %v, got %v", msc.Version, version,
 		)

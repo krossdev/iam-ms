@@ -6,8 +6,6 @@ package main
 import (
 	"time"
 
-	"github.com/krossdev/iam-ms/mss/xlog"
-
 	"github.com/nats-io/nats.go"
 )
 
@@ -22,7 +20,9 @@ func reconnect(servers []string) error {
 	opts.Servers = servers
 	opts.Name = "kiam-ms"
 	opts.Timeout = 10 * time.Second
-	opts.MaxReconnect = -1 // never give up reconnect
+
+	// never give up reconnect once connected
+	opts.MaxReconnect = -1
 
 	// connection events
 	opts.AsyncErrorCB = asyncErrorHandler
@@ -45,27 +45,7 @@ func reconnect(servers []string) error {
 // disconnect from message broker
 func disconnect() {
 	if conn != nil {
+		conn.Drain()
 		conn.Close()
 	}
-}
-
-// nats async error callback
-func asyncErrorHandler(c *nats.Conn, s *nats.Subscription, e error) {
-	xlog.X.WithError(e).Error("Message broker async error")
-}
-
-func disconnectedErrorHandler(c *nats.Conn, e error) {
-	xlog.X.WithError(e).Warn("Message broker disconnected")
-}
-
-func reconnectedHandler(c *nats.Conn) {
-	xlog.X.Info("Message broker reconnected")
-}
-
-func discoveredServersHandler(c *nats.Conn) {
-	xlog.X.Info("Message broker discover new server")
-}
-
-func closedHandler(c *nats.Conn) {
-	xlog.X.Info("Message broker connection closed")
 }

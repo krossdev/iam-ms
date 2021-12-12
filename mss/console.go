@@ -3,24 +3,18 @@
 //
 package main
 
-import (
-	"github.com/krossdev/iam-ms/msc"
-	"github.com/krossdev/iam-ms/mss/xlog"
-	"github.com/nats-io/nats.go"
-)
+// var consoleHanders = map[string]nats.Handler{
+// 	msc.ActionNameResendVerifyEmail: nil,
+// }
 
-var consoleHanders = map[string]nats.Handler{
-	msc.ActionNameResendVerifyEmail: nil,
-}
+// func init() {
 
-func init() {
+// }
 
-}
+// func consoleHandler(a *msc.ActionRequest) {
+// 	xlog.X.Infof("recv action: %v", a)
+// }
 
-func consoleHandler(a *msc.RequestAction) {
-	xlog.X.Infof("recv action: %v", a)
-}
-
-func subscribeConsoleActions() error {
-	return subscribeActions(msc.SubjectConsoleActions, consoleHandler)
-}
+// func subscribeConsoleActions() error {
+// 	return subscribeActions(msc.SubjectConsoleActions, consoleHandler)
+// }

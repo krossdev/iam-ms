@@ -5,74 +5,52 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/krossdev/iam-ms/msc"
 	"github.com/krossdev/iam-ms/mss/xlog"
-	"github.com/nats-io/nats.go"
 	"github.com/sirupsen/logrus"
 )
 
-func subscribeActions(subject string, handler nats.Handler) error {
-	_, err := conn.Subscribe(subject, actionHandler)
+// subscribe to action subject
+func subscribeAction() error {
+	_, err := conn.Subscribe(msc.SubjectAction, actionHandler)
 	return err
 }
 
-func actionHandler(subject, reply string, a *msc.RequestAction) {
+func actionHandler(subject, reply string, qt *msc.Request) {
 	l := xlog.X.WithFields(logrus.Fields{
-		"version": a.Version,
-		"time":    a.Time,
-		"reqid":   a.ReqId,
-		"name":    a.Name,
+		"version": qt.Version,
+		"time":    qt.Time,
+		"reqid":   qt.ReqId,
+		"action":  qt.Action,
 	})
-	l.Infof("receive action %s on %s, reply to = %s", a.Name, subject, reply)
+	l.Infof("request %s on %s, reply to = %s", qt.Action, subject, reply)
 
 	// reply subject(inbox) cannot be empty
 	if len(reply) == 0 {
 		err := fmt.Errorf("missing reply subject")
-		l.WithError(err).Error("request invalid")
-		replyActionWithError(a.ReqId, reply, err, msc.ReplyCodeNoReply)
+		l.WithError(err).Error("bad request")
+		return
 	}
-	if err := checkRequestAction(a); err != nil {
-		l.WithError(err).Error("request invalid")
-		replyActionWithError(a.ReqId, reply, err, msc.ReplyCodeNoReply)
+	// function to publish reply
+	replyTo := func(code int32, message string, payload interface{}) {
+		rp := msc.MakeReply(code, message, payload, qt.ReqId)
+		if err := conn.Publish(reply, &rp); err != nil {
+			l.WithError(err).Errorf("failed to reply to %s", qt.Action)
+		}
 	}
-	replyActionWithOk(a.ReqId, reply)
-
-	l.Infof("action %s done!", a.Name)
-}
-
-// check request action
-func checkRequestAction(a *msc.RequestAction) error {
-	// check request version
-	if err := checkVersion(a.Version); err != nil {
-		return err
+	if perr := checkRequest(qt); perr != nil {
+		l.WithError(perr.err).Error("bad request")
+		replyTo(perr.code, perr.Error(), nil)
+		return
 	}
-	// check request time
-	td := time.Since(time.UnixMicro(a.Time))
-	if td < 0 || td > 10*time.Second {
-		return fmt.Errorf("request time %d invalid", a.Time)
+	if len(qt.Action) == 0 {
+		err := fmt.Errorf("request missing action")
+		l.WithError(err).Error("bad request")
+		replyTo(msc.ReplyNoAction, err.Error(), nil)
+		return
 	}
-	return nil
-}
+	l.Infof("request %s done!", qt.Action)
 
-// response with error
-func replyActionWithError(reqid string, reply string, err error, code int32) {
-	conn.Publish(reply, &msc.ReplyAction{
-		Version: msc.Version,
-		Time:    time.Now().UnixMicro(),
-		ReqId:   reqid,
-		Code:    code,
-		Message: err.Error(),
-	})
-}
-
-// response with success
-func replyActionWithOk(reqid string, reply string) {
-	conn.Publish(reply, &msc.ReplyAction{
-		Version: msc.Version,
-		Time:    time.Now().UnixMicro(),
-		ReqId:   reqid,
-		Code:    msc.ReplyCodeOk,
-	})
+	replyTo(msc.ReplyOk, "", nil)
 }

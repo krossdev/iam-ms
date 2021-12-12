@@ -79,8 +79,9 @@ func load() error {
 		return errors.Wrap(err, "failed to connect message borker")
 	}
 
-	if err = subscribeConsoleActions(); err != nil {
-		return errors.Wrap(err, "failed to subscribe console actions")
+	// subscribe action subject
+	if err = subscribeAction(); err != nil {
+		return errors.Wrap(err, "failed to subscribe action subject")
 	}
 	return nil
 }
