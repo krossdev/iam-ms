@@ -22,16 +22,37 @@ func init() {
 func sendVerifyEmail(payload interface{}, l *logrus.Entry) (interface{}, error) {
 	var p msc.SendVerifyEmailPayload
 
+	// convert map to struct
 	if err := mapstructure.Decode(payload, &p); err != nil {
 		return nil, err
 	}
-
+	// parse recipient address
 	to, err := mail.ParseAddress(p.To)
 	if err != nil {
 		return nil, errors.Wrap(err, "email address invalid")
 	}
-	m := email.HTMLMessage("Please verify your email address", "please verify")
+	// generate mail body
+	body := `
+	<html>
+		<head>
+		</head>
+		<body>
+			<h1>REPLY</h1>
+			<img width='64px' height='64px' src="cid:logo" alt='Logo' />
+			<img src='https://miro.medium.com/max/1400/1*3LEMkgStgOhX1kSi08oZhQ.jpeg'
+				width='32px' height='32px' />
+			<p>Here is some content</p>
+		</body>
+	</html>
+	`
+
+	// contract a mail message to send
+	m := email.HTMLMessage("Please verify your email address", body)
 	m.AddTO(to)
-	err = m.Send()
-	return nil, err
+
+	if err = m.Send(); err != nil {
+		l.WithError(err).Errorf("failed to send verify email to %s", to)
+		return nil, err
+	}
+	return nil, nil
 }

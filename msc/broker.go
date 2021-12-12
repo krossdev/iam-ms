@@ -62,8 +62,8 @@ func (b *Broker) connect() error {
 // disconnect from message server
 func (b *Broker) disconnect() {
 	if b.conn != nil && b.conn.Conn.IsConnected() {
-		if err := b.conn.FlushTimeout(3 * time.Second); err != nil {
-			logger.WithError(err).Warn("flush error")
+		if err := b.conn.Drain(); err != nil {
+			logger.WithError(err).Warn("drain error")
 		}
 		b.conn.Close()
 	}
@@ -97,7 +97,7 @@ func (b *Broker) request(subject, action string, payload interface{}) (interface
 	var rp Reply
 
 	// send request and wait for first reply
-	if err := b.conn.Request(subject, &qt, &rp, 10*time.Second); err != nil {
+	if err := b.conn.Request(subject, &qt, &rp, 60*time.Second); err != nil {
 		return nil, errors.Wrap(err, "communication error")
 	}
 	if err := checkReply(&rp, qt.ReqId); err != nil {
@@ -110,7 +110,7 @@ func (b *Broker) request(subject, action string, payload interface{}) (interface
 		l.Errorf("request %s reply %d: %s, latency %.2fms",
 			action, rp.Code, rp.Message, float64(dt/1000),
 		)
-		return nil, fmt.Errorf("%d-%s", rp.Code, rp.Message)
+		return nil, fmt.Errorf("%s", rp.Message)
 	}
 	l.Tracef("request %s reply ok, latency %.2fms", action, float64(dt/1000))
 

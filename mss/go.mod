@@ -8,6 +8,7 @@ require (
 	github.com/airbrake/gobrake/v5 v5.1.1
 	github.com/blang/semver/v4 v4.0.0
 	github.com/fatih/color v1.13.0
+	github.com/google/uuid v1.3.0
 	github.com/krossdev/iam-ms/msc v0.0.0-00010101000000-000000000000
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/nats-io/nats.go v1.13.1-0.20211122170419-d7c1d78a50fc
@@ -19,7 +20,6 @@ require (
 
 require (
 	github.com/caio/go-tdigest v3.1.0+incompatible // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
 	github.com/mattn/go-colorable v0.1.9 // indirect

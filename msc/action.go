@@ -23,15 +23,19 @@ const (
 )
 
 type SendVerifyEmailPayload struct {
-	To string `json:"to"`
+	Name string `json:"username"` // user name
+	To   string `json:"to"`       // recipient address
+	Href string `json:"href"`     // verify url
 }
 
-func SendVerifyEmail(to string) error {
+func SendVerifyEmail(name, to, href string) error {
 	if _, err := mail.ParseAddress(to); err != nil {
 		return err
 	}
 	payload := SendVerifyEmailPayload{
-		To: to,
+		Name: name,
+		To:   to,
+		Href: href,
 	}
 	_, err := requestAction(ASendVerifyEmail, &payload)
 	return err

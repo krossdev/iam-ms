@@ -32,10 +32,14 @@ type Reply struct {
 
 // reply code
 const (
-	ReplyOk         = 0
-	ReplyNoReply    = 100
-	ReplyBadVersion = 101
-	ReplyBadTime    = 102
+	ReplyOk         = 0   // ok
+	ReplyError      = 1   // general error
+	ReplyNoReply    = 100 // no reply(inbox) subject present
+	ReplyBadVersion = 101 // version incompatibled
+	ReplyBadTime    = 102 // time incorrent
+	ReplyNoReqid    = 103 // missing reqid
+	ReplyNoAction   = 104 // missing action
+	ReplyNotImp     = 105 // not implemented
 )
 
 // make a request package
@@ -62,4 +66,16 @@ func checkReply(rp *Reply, reqid string) error {
 		return fmt.Errorf("reply reqid '%s' dismatch to '%s'", rp.ReqId, reqid)
 	}
 	return nil
+}
+
+// make a reply package
+func MakeReply(code int32, message string, payload interface{}, reqid string) *Reply {
+	return &Reply{
+		Version: Version,
+		Time:    time.Now().UnixMicro(),
+		ReqId:   reqid,
+		Code:    code,
+		Message: message,
+		Payload: payload,
+	}
 }

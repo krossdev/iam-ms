@@ -16,6 +16,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/krossdev/iam-ms/mss/config"
 	"github.com/krossdev/iam-ms/mss/xlog"
 )
@@ -25,6 +27,7 @@ type Attachment struct {
 	Filename string
 	Data     []byte
 	Inline   bool
+	Cid      string
 }
 
 // Header represents an additional email header.
@@ -44,9 +47,10 @@ type Message struct {
 	BodyType    string
 	Headers     []Header
 	Attachments map[string]*Attachment
+	hasInline   bool
 }
 
-func (m *Message) attach(file string, inline bool) error {
+func (m *Message) attach(file string, inline bool, cid string) error {
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return err
@@ -57,6 +61,10 @@ func (m *Message) attach(file string, inline bool) error {
 		Filename: filename,
 		Data:     data,
 		Inline:   inline,
+		Cid:      cid,
+	}
+	if inline {
+		m.hasInline = true
 	}
 	return nil
 }
@@ -91,12 +99,12 @@ func (m *Message) AttachBuffer(filename string, buf []byte, inline bool) error {
 
 // Attach attaches a file.
 func (m *Message) Attach(file string) error {
-	return m.attach(file, false)
+	return m.attach(file, false, "")
 }
 
 // Inline includes a file as an inline attachment.
-func (m *Message) Inline(file string) error {
-	return m.attach(file, true)
+func (m *Message) Inline(file string, cid string) error {
+	return m.attach(file, true, cid)
 }
 
 // AddHeader a Header to message
@@ -110,22 +118,26 @@ func (m *Message) AddHeader(key string, value string) Header {
 func (m *Message) bytes(sender *mail.Address) []byte {
 	buf := bytes.NewBuffer(nil)
 
-	buf.WriteString("From: " + sender.String() + "\r\n")
+	buf.WriteString(fmt.Sprintf("From: %s\r\n", sender.String()))
 
 	t := time.Now()
-	buf.WriteString("Date: " + t.Format(time.RFC1123Z) + "\r\n")
+	buf.WriteString(fmt.Sprintf("Date: %s\r\n", t.Format(time.RFC1123Z)))
 
-	buf.WriteString("To: " + strings.Join(recipients(true, m.To), ",") + "\r\n")
+	buf.WriteString(fmt.Sprintf(
+		"To: %s\r\n", strings.Join(recipients(true, m.To), ","),
+	))
 	if len(m.Cc) > 0 {
-		buf.WriteString("Cc: " + strings.Join(recipients(true, m.Cc), ",") + "\r\n")
+		buf.WriteString(fmt.Sprintf(
+			"Cc: %s\r\n", strings.Join(recipients(true, m.Cc), ","),
+		))
 	}
 
 	var coder = base64.StdEncoding
 	var subject = "=?UTF-8?B?" + coder.EncodeToString([]byte(m.Subject)) + "?="
-	buf.WriteString("Subject: " + subject + "\r\n")
+	buf.WriteString(fmt.Sprintf("Subject: %s\r\n", subject))
 
 	if len(m.ReplyTo) > 0 {
-		buf.WriteString("Reply-To: " + m.ReplyTo + "\r\n")
+		buf.WriteString(fmt.Sprintf("Reply-To: %s\r\n", m.ReplyTo))
 	}
 	buf.WriteString("MIME-Version: 1.0\r\n")
 
@@ -135,58 +147,79 @@ func (m *Message) bytes(sender *mail.Address) []byte {
 			buf.WriteString(fmt.Sprintf("%s: %s\r\n", header.Key, header.Value))
 		}
 	}
-	boundary := "f46d043c813270fc6b04c2d223da"
-
-	if len(m.Attachments) > 0 {
-		buf.WriteString("Content-Type: multipart/mixed; boundary=" + boundary + "\r\n")
-		buf.WriteString("\r\n--" + boundary + "\r\n")
+	// write message body
+	writeBody := func() {
+		buf.WriteString(fmt.Sprintf(
+			"Content-Type: %s; charset=utf-8\r\n\r\n", m.BodyType,
+		))
+		buf.WriteString(m.Body)
+		buf.WriteString("\r\n")
 	}
-
-	buf.WriteString(fmt.Sprintf("Content-Type: %s; charset=utf-8\r\n\r\n", m.BodyType))
-	buf.WriteString(m.Body)
-	buf.WriteString("\r\n")
-
+	// no attachment, write the body and return
 	if len(m.Attachments) == 0 {
+		writeBody()
 		return buf.Bytes()
 	}
-	for _, attachment := range m.Attachments {
-		buf.WriteString("\r\n\r\n--" + boundary + "\r\n")
+	// generate a random boundary
+	boundary := strings.ToLower(strings.ReplaceAll(uuid.NewString(), "-", ""))
 
-		if attachment.Inline {
-			buf.WriteString("Content-Type: message/rfc822\r\n")
-			buf.WriteString("Content-Disposition: inline; filename=\"" +
-				attachment.Filename + "\"\r\n\r\n")
+	if m.hasInline {
+		buf.WriteString(fmt.Sprintf(
+			"Content-Type: multipart/related; boundary=%s\r\n", boundary,
+		))
+	} else {
+		buf.WriteString(fmt.Sprintf(
+			"Content-Type: multipart/mixed; boundary=%s\r\n", boundary,
+		))
+	}
+	buf.WriteString(fmt.Sprintf("\r\n--%s\r\n", boundary))
 
-			buf.Write(attachment.Data)
+	// write body
+	writeBody()
+
+	// write attachment
+	writeAttachment := func(attachment *Attachment) {
+		ext := filepath.Ext(attachment.Filename)
+		mimetype := mime.TypeByExtension(ext)
+		if len(mimetype) > 0 {
+			mime := fmt.Sprintf("Content-Type: %s\r\n", mimetype)
+			buf.WriteString(mime)
 		} else {
-			ext := filepath.Ext(attachment.Filename)
-			mimetype := mime.TypeByExtension(ext)
-			if mimetype != "" {
-				mime := fmt.Sprintf("Content-Type: %s\r\n", mimetype)
-				buf.WriteString(mime)
-			} else {
-				buf.WriteString("Content-Type: application/octet-stream\r\n")
-			}
-			buf.WriteString("Content-Transfer-Encoding: base64\r\n")
+			buf.WriteString("Content-Type: application/octet-stream\r\n")
+		}
+		buf.WriteString("Content-Transfer-Encoding: base64\r\n")
 
+		// inline attachment give a content id so body can ref to it by cid:
+		if attachment.Inline {
+			buf.WriteString(fmt.Sprintf("Content-ID: <%s>\r\n", attachment.Cid))
+			buf.WriteString(fmt.Sprintf(
+				"Content-Disposition: inline; filename=\"%s\"\r\n\r\n",
+				attachment.Filename,
+			))
+		} else {
 			buf.WriteString("Content-Disposition: attachment; filename=\"=?UTF-8?B?")
 			buf.WriteString(coder.EncodeToString([]byte(attachment.Filename)))
 			buf.WriteString("?=\"\r\n\r\n")
+		}
+		b := make([]byte, base64.StdEncoding.EncodedLen(len(attachment.Data)))
+		base64.StdEncoding.Encode(b, attachment.Data)
 
-			b := make([]byte, base64.StdEncoding.EncodedLen(len(attachment.Data)))
-			base64.StdEncoding.Encode(b, attachment.Data)
-
-			// write base64 content in lines of up to 76 chars
-			for i, l := 0, len(b); i < l; i++ {
-				buf.WriteByte(b[i])
-				if (i+1)%76 == 0 {
-					buf.WriteString("\r\n")
-				}
+		// write base64 content in lines of up to 76 chars
+		for i, l := 0, len(b); i < l; i++ {
+			buf.WriteByte(b[i])
+			if (i+1)%76 == 0 {
+				buf.WriteString("\r\n")
 			}
 		}
-		buf.WriteString("\r\n--" + boundary)
 	}
-	buf.WriteString("--")
+
+	// write all attachments
+	for _, attachment := range m.Attachments {
+		buf.WriteString(fmt.Sprintf("\r\n\r\n--%s\r\n", boundary))
+		writeAttachment(attachment)
+	}
+	buf.WriteString(fmt.Sprintf("\r\n--%s--", boundary))
+
 	return buf.Bytes()
 }
 
@@ -196,23 +229,26 @@ func (m *Message) Send() error {
 		xlog.X.Panic("email config is empty, please Setup()")
 	}
 	if len(mailConfig.Mtas) == 0 {
-		return fmt.Errorf("no smtp mta found")
+		return fmt.Errorf("no smtp mta found, please check configuration")
 	}
 	if len(mailConfig.SubjectPrefix) > 0 {
 		m.Subject = fmt.Sprintf("%s %s", mailConfig.SubjectPrefix, m.Subject)
 	}
 	sent := false
 
+	// try all of mtas one by one, until meet one can send the mail
 	for _, mta := range mailConfig.Mtas {
 		if err := m.send(&mta); err != nil {
-			xlog.X.Warnf("send mail with '%s' error %v", mta.Name, err)
+			xlog.X.Warnf("send mail with '%s' error: %v", mta.Name, err)
 			continue
 		}
 		sent = true
 		break
 	}
 	if !sent {
-		return fmt.Errorf("try all mta but no one can send this mail")
+		return fmt.Errorf("try all %d mtas but no one can send this mail",
+			len(mailConfig.Mtas),
+		)
 	}
 	return nil
 }
@@ -223,7 +259,7 @@ func (m *Message) send(mta *config.Mta) error {
 		return fmt.Errorf("mta '%s' host is empty", mta.Name)
 	}
 	if len(mta.Sender) == 0 {
-		return fmt.Errorf("mta '%s' sender address is empty", mta.Name)
+		return fmt.Errorf("mta '%s' sender is empty", mta.Name)
 	}
 	from, err := mail.ParseAddress(mta.Sender)
 	if err != nil {
@@ -240,9 +276,8 @@ func (m *Message) send(mta *config.Mta) error {
 	return smtp.SendMail(dest, auth, from.Address, to, m.bytes(from))
 }
 
-// here need to call tls.Dial instead of smtp.Dial
-// for smtp servers running on 465 that require an ssl connection
-// from the very beginning (no starttls)
+// need to call tls.Dial instead of smtp.Dial for smtp servers running on 465 that
+// require an ssl connection from the very beginning (no starttls)
 func (m *Message) sendWithSSL(mta *config.Mta, from *mail.Address, to []string) error {
 	dest := fmt.Sprintf("%s:%d", mta.Host, mta.Port)
 

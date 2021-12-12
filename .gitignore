@@ -4,6 +4,8 @@
 *.dll
 *.so
 *.dylib
+
+# IDE
 .idea
 
 # Test binary, built with `go test -c`
@@ -17,3 +19,4 @@
 
 # nats
 nats-server/nats*
+
