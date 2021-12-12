@@ -7,7 +7,9 @@ import (
 	"fmt"
 
 	"github.com/krossdev/iam-ms/msc"
+	"github.com/krossdev/iam-ms/mss/action"
 	"github.com/krossdev/iam-ms/mss/xlog"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -50,7 +52,21 @@ func actionHandler(subject, reply string, qt *msc.Request) {
 		replyTo(msc.ReplyNoAction, err.Error(), nil)
 		return
 	}
+	// dispatch the action
+	f := action.Find(qt.Action)
+	if f == nil {
+		err := fmt.Errorf("no register handler for %s", qt.Action)
+		l.WithError(err).Error("dispatch error")
+		replyTo(msc.ReplyNotImp, err.Error(), nil)
+		return
+	}
+	payload, err := f(qt.Payload, l)
+	if err != nil {
+		l.WithError(err).Error("dispatch error")
+		replyTo(msc.ReplyError, err.Error(), nil)
+		return
+	}
 	l.Infof("request %s done!", qt.Action)
 
-	replyTo(msc.ReplyOk, "", nil)
+	replyTo(msc.ReplyOk, "ok", payload)
 }
