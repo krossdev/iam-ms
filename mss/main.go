@@ -12,7 +12,9 @@ import (
 
 	"github.com/krossdev/iam-ms/msc"
 	"github.com/krossdev/iam-ms/mss/config"
+	"github.com/krossdev/iam-ms/mss/email"
 	"github.com/krossdev/iam-ms/mss/xlog"
+
 	"github.com/pkg/errors"
 )
 
@@ -73,6 +75,9 @@ func load() error {
 
 	// set msc logger
 	msc.SetLogger(xlog.F(xlog.FRealm, "ms"))
+
+	// propagation mail configuration
+	email.Setup(&conf.Mail)
 
 	// connect to message border
 	if err = reconnect(conf.Brokers); err != nil {

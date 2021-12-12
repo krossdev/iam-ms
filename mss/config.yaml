@@ -21,6 +21,31 @@ log:
     pid: project-id
     key: project-key
 
-# nats server(s)
+# Nats server(s)
+#
 brokers:
   - nats://localhost:4222
+
+# Mail configuration
+#
+mail:
+  # Add prefix to mail subject
+  #
+  subject_prefix: '[KrossIAM]'
+
+  # MTAs(mail transfer agent), You can add multiple mta as fallbacks
+  #
+  mtas:
+    -
+      # mail service provider name
+      name: provider-name
+      # smtp host
+      host: smtp.host.com
+      # smtp port
+      port: 465
+      # connection mode
+      sslmode: true
+      # sender address(RFC 5322), can contain display name like 'name <sender@host.com>'
+      sender: youname <noreply@host.com>
+      # authenticate password
+      passwd: password

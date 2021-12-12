@@ -18,10 +18,26 @@ type Log struct {
 	}
 }
 
+type Mta struct {
+	Name    string `yaml:"name"`
+	Host    string `yaml:"host"`
+	Port    int    `yaml:"port"`
+	SSLMode bool   `yaml:"sslmode"`
+	Sender  string `yaml:"sender"`
+	Passwd  string `yaml:"passwd"`
+}
+
+// Mail
+type Mail struct {
+	SubjectPrefix string `yaml:"subject_prefix"`
+	Mtas          []Mta  `yaml:"mtas"`
+}
+
 type Configuration struct {
 	Debug   bool     `yaml:"debug"`
 	Log     Log      `yaml:"log"`
 	Brokers []string `yaml:"brokers"`
+	Mail    Mail     `yaml:"mail"`
 }
 
 // Load configuration from file
