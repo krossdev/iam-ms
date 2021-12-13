@@ -1,9 +1,9 @@
 <mjml lang="en">
   <mj-head>
-    <mj-include path="./head.mjml" />
+    <mj-include path="./component/head.mjml" />
   </mj-head>
   <mj-body>
-    <mj-include path="./header.mjml" />
+    <mj-include path="./component/header.mjml" />
     <mj-section padding="0px">
       <mj-column>
         <mj-text> Dear {{.Name}} </mj-text>

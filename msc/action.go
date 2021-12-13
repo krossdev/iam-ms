@@ -23,9 +23,9 @@ const (
 )
 
 type SendVerifyEmailPayload struct {
-	Name string `json:"username"` // user name
-	To   string `json:"to"`       // recipient address
-	Href string `json:"href"`     // verify url
+	Name string `json:"name"` // user name
+	To   string `json:"to"`   // recipient address
+	Href string `json:"href"` // verify url
 }
 
 func SendVerifyEmail(name, to, href string) error {
