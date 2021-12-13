@@ -1,0 +1,9 @@
+<mjml>
+  <<mj-head>
+    <mj-title>{{.TemplateData.Title}}</mj-title>
+    <mj-attributes>
+      <mj-all font-family="Verdana, Arial, Calibri, Times New Roman" />
+      <<mj-text font-size="15px" line-height="1.5" />
+    </mj-attributes>
+  </mj-head>
+</mjml>

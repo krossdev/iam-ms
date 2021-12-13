@@ -12,6 +12,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+type TemplateData struct {
+	Logo  template.URL // logo url, can be a http url, a cid:xxx or a base64 dataurl
+	Title string       // title
+}
+
 // load template from file
 func ExecTemplate(tname string, data interface{}) (string, error) {
 	if !strings.HasSuffix(tname, ".html") {

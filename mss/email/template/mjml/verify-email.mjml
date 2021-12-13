@@ -1,19 +1,51 @@
-<mjml>
+<mjml lang="en">
+  <mj-head>
+    <mj-include path="./head.mjml" />
+  </mj-head>
   <mj-body>
-    <mj-include path='./header.mjml' />
-    <mj-section padding='0px'>
+    <mj-include path="./header.mjml" />
+    <mj-section padding="0px">
       <mj-column>
-        <mj-text>
-          Dear {{.Name}}, please verify the email address by click below button.
-          if the button is not work, copy the url below to browser to verify.
+        <mj-text> Dear {{.Name}} </mj-text>
+        <mj-text> Please verify your email address: {{.To}} </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0px">
+      <mj-column>
+        <mj-button
+          background-color="#CC008C"
+          font-size="14px"
+          font-weight="bold"
+          href="{{.Href}}"
+        >
+          Verify email address
+        </mj-button>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0px">
+      <mj-column>
+        <mj-text> The link will expire in 30 minutes. </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0px">
+      <<mj-column>
+        <<mj-divider border-width="1px" border-color="#888" />
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0px">
+      <mj-column>
+        <mj-text font-size="12px" color="#888">
+          Button not working? Paste the following link into your browser:
+          {{.Href}}
         </mj-text>
       </mj-column>
     </mj-section>
-    <mj-section padding='0px'>
+    <mj-section padding="0px">
       <mj-column>
-        <mj-button color='white' background-color='#FF00AF' font-size='14px' font-weight='bold' href='{{.Href}}'>
-          Verify my email
-        </mj-button>
+        <mj-text font-size="12px" color="#888">
+          You’re receiving this email because you requested a verification
+          email. If this wasn’t you, please inform the administrator.
+        </mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
