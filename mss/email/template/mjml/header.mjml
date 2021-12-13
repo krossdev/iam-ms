@@ -1,0 +1,9 @@
+<mjml>
+  <mj-body>
+    <mj-section padding-bottom='0px'>
+      <mj-column>
+        <mj-image src='cid:{{.Logo}}' alt='Logo' width='48px' height='48px' align='left' />
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

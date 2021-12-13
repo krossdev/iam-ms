@@ -1,0 +1,20 @@
+<mjml>
+  <mj-body>
+    <mj-include path='./header.mjml' />
+    <mj-section padding='0px'>
+      <mj-column>
+        <mj-text>
+          Dear {{.Name}}, please verify the email address by click below button.
+          if the button is not work, copy the url below to browser to verify.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding='0px'>
+      <mj-column>
+        <mj-button color='white' background-color='#FF00AF' font-size='14px' font-weight='bold' href='{{.Href}}'>
+          Verify my email
+        </mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

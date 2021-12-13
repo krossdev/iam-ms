@@ -24,13 +24,16 @@ type Mta struct {
 	Port    int    `yaml:"port"`
 	SSLMode bool   `yaml:"sslmode"`
 	Sender  string `yaml:"sender"`
+	User    string `yaml:"user"`
 	Passwd  string `yaml:"passwd"`
 }
 
 // Mail
 type Mail struct {
 	SubjectPrefix string `yaml:"subject_prefix"`
+	TemplateDir   string `yaml:"template_dir"`
 	Mtas          []Mta  `yaml:"mtas"`
+	PreferredMta  string `yaml:"preferred_mta"`
 }
 
 type Configuration struct {

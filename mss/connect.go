@@ -47,7 +47,7 @@ func reconnect(servers []string) error {
 func disconnect() {
 	if conn != nil {
 		if err := conn.Drain(); err != nil {
-			xlog.X.Warn("drain error")
+			xlog.X.WithError(err).Warn("drain error")
 		}
 		conn.Close()
 	}

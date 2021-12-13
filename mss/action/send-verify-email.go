@@ -4,12 +4,13 @@
 package action
 
 import (
-	"html/template"
 	"net/mail"
-	"os"
+	"strings"
 
+	"github.com/google/uuid"
 	"github.com/krossdev/iam-ms/msc"
 	"github.com/krossdev/iam-ms/mss/email"
+	"github.com/krossdev/iam-ms/mss/xlog"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
@@ -20,31 +21,43 @@ func init() {
 	handlers[msc.ASendVerifyEmail] = sendVerifyEmail
 }
 
-// send-verify-email action
-func sendVerifyEmail(payload interface{}, l *logrus.Entry) (interface{}, error) {
-	var p msc.SendVerifyEmailPayload
+type SendVerifyEmailTemplateData struct {
+	msc.SendVerifyEmailPayload
+	Logo string
+}
 
+// send-verify-email action
+func sendVerifyEmail(p interface{}, l *logrus.Entry) (interface{}, error) {
+	var payload msc.SendVerifyEmailPayload
+
+	xlog.X.Infof("payload: %v", p)
 	// convert map to struct
-	if err := mapstructure.Decode(payload, &p); err != nil {
+	if err := mapstructure.Decode(p, &payload); err != nil {
 		return nil, err
 	}
+	xlog.X.Infof("data: %v", payload)
+
 	// parse recipient address
-	to, err := mail.ParseAddress(p.To)
+	to, err := mail.ParseAddress(payload.To)
 	if err != nil {
 		return nil, errors.Wrap(err, "email address invalid")
 	}
-	// generate mail body
-	t, err := template.New("email").Parse("")
+	// template data add a logo field
+	tdata := SendVerifyEmailTemplateData{
+		payload,
+		strings.ReplaceAll(uuid.NewString(), "-", ""),
+	}
+	// generate mail content
+	content, err := email.ExecTemplate("verify-email", &tdata)
 	if err != nil {
-		return nil, errors.Wrap(err, "parse mail template error")
+		return nil, err
 	}
-	if err = t.Execute(os.Stdout, &p); err != nil {
-		return nil, errors.Wrap(err, "generate mail content error")
-	}
-
-	// contract a mail message to send
-	m := email.HTMLMessage("Please verify your email address", "")
+	// contract a mail message
+	m := email.HTMLMessage("Please verify your email address", content)
 	m.AddTO(to)
+
+	// inline logo
+	m.Inline(email.LogoPath(), tdata.Logo)
 
 	// send mail
 	if err = m.Send(); err != nil {

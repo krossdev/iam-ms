@@ -33,6 +33,10 @@ mail:
   #
   subject_prefix: '[KrossIAM]'
 
+  # Path to template files
+  #
+  template_dir: email/template/html
+
   # MTAs(mail transfer agent), You can add multiple mta as fallbacks
   #
   mtas:
@@ -47,5 +51,7 @@ mail:
       sslmode: true
       # sender address(RFC 5322), can contain display name like 'name <sender@host.com>'
       sender: youname <noreply@host.com>
+      # authenticate user, optional
+      user: auth user
       # authenticate password
-      passwd: password
+      passwd: auth password

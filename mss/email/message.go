@@ -160,23 +160,6 @@ func (m *Message) bytes(sender *mail.Address) []byte {
 		writeBody()
 		return buf.Bytes()
 	}
-	// generate a random boundary
-	boundary := strings.ToLower(strings.ReplaceAll(uuid.NewString(), "-", ""))
-
-	if m.hasInline {
-		buf.WriteString(fmt.Sprintf(
-			"Content-Type: multipart/related; boundary=%s\r\n", boundary,
-		))
-	} else {
-		buf.WriteString(fmt.Sprintf(
-			"Content-Type: multipart/mixed; boundary=%s\r\n", boundary,
-		))
-	}
-	buf.WriteString(fmt.Sprintf("\r\n--%s\r\n", boundary))
-
-	// write body
-	writeBody()
-
 	// write attachment
 	writeAttachment := func(attachment *Attachment) {
 		ext := filepath.Ext(attachment.Filename)
@@ -212,13 +195,76 @@ func (m *Message) bytes(sender *mail.Address) []byte {
 			}
 		}
 	}
+	// generate a random mixed boundary
+	mixed := strings.ToLower(strings.ReplaceAll(uuid.NewString(), "-", ""))
 
-	// write all attachments
-	for _, attachment := range m.Attachments {
-		buf.WriteString(fmt.Sprintf("\r\n\r\n--%s\r\n", boundary))
-		writeAttachment(attachment)
+	// mixed begin
+	buf.WriteString(fmt.Sprintf(
+		"Content-Type: multipart/mixed; boundary=%s\r\n", mixed,
+	))
+	buf.WriteString(fmt.Sprintf("\r\n--%s\r\n", mixed))
+
+	// if has inline attachment, the email will become below structure
+	// + mixed
+	// | + alternative
+	// | | + related
+	// | | | - body
+	// | | | - inline attachment 1
+	// | | | - inline attachment 2
+	// | | | - ...
+	// | - non-inline attachment 1
+	// | - non-inline attachment 2
+	// | - ...
+	//
+	// if no inline attachment, the email will be below structure
+	// + mixed
+	// | - body
+	// | - non-inline attachment 1
+	// | - non-inline attachment 2
+	// | - ...
+	if m.hasInline {
+		// random generated boundary
+		alternative := strings.ToLower(strings.ReplaceAll(uuid.NewString(), "-", ""))
+		related := strings.ToLower(strings.ReplaceAll(uuid.NewString(), "-", ""))
+
+		// alternative begin
+		buf.WriteString(fmt.Sprintf(
+			"Content-Type: multipart/alternative; boundary=%s\r\n", alternative,
+		))
+		buf.WriteString(fmt.Sprintf("\r\n--%s\r\n", alternative))
+
+		// related begin
+		buf.WriteString(fmt.Sprintf(
+			"Content-Type: multipart/related; boundary=%s\r\n", related,
+		))
+		buf.WriteString(fmt.Sprintf("\r\n--%s\r\n", related))
+
+		writeBody() // write body
+
+		// write all inline attachments
+		for _, attachment := range m.Attachments {
+			if attachment.Inline {
+				buf.WriteString(fmt.Sprintf("\r\n\r\n--%s\r\n", related))
+				writeAttachment(attachment)
+			}
+		}
+		// related end
+		buf.WriteString(fmt.Sprintf("\r\n--%s--", related))
+
+		// alternative end
+		buf.WriteString(fmt.Sprintf("\r\n--%s--", alternative))
+	} else {
+		writeBody() // write body
 	}
-	buf.WriteString(fmt.Sprintf("\r\n--%s--", boundary))
+	// write all non-inline attachments
+	for _, attachment := range m.Attachments {
+		if !attachment.Inline {
+			buf.WriteString(fmt.Sprintf("\r\n\r\n--%s\r\n", mixed))
+			writeAttachment(attachment)
+		}
+	}
+	// mixed end
+	buf.WriteString(fmt.Sprintf("\r\n--%s--", mixed))
 
 	return buf.Bytes()
 }
@@ -270,8 +316,16 @@ func (m *Message) send(mta *config.Mta) error {
 	if mta.SSLMode {
 		return m.sendWithSSL(mta, from, to)
 	}
+	var auth smtp.Auth
+
+	if len(mta.Passwd) > 0 {
+		if len(mta.User) > 0 {
+			auth = smtp.PlainAuth("", mta.User, mta.Passwd, mta.Host)
+		} else {
+			auth = smtp.PlainAuth("", from.Address, mta.Passwd, mta.Host)
+		}
+	}
 	dest := fmt.Sprintf("%s:%d", mta.Host, mta.Port)
-	auth := smtp.PlainAuth("", from.Address, mta.Passwd, mta.Host)
 
 	return smtp.SendMail(dest, auth, from.Address, to, m.bytes(from))
 }

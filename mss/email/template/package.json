@@ -4,8 +4,9 @@
   "description": "Email template",
   "private": true,
   "scripts": {
-    "mjml": "mjml",
-    "watch": "mjml watch"
+    "mjml": "mjml --read mjml/*.mjml -o html",
+    "watch": "mjml --watch mjml/*.mjml -o html",
+    "help": "mjml --help"
   },
   "dependencies": {
     "mjml": "^4.11.0"

@@ -29,7 +29,7 @@ func main() {
 
 	// setup everythings
 	if err := load(); err != nil {
-		xlog.X.Fatalf("Startup failure")
+		xlog.X.WithError(err).Fatalf("Startup failure")
 	}
 
 	// wait for shutdown
