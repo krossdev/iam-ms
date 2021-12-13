@@ -7,11 +7,6 @@
     "mjml": "mjml",
     "watch": "mjml watch"
   },
-  "keywords": [
-    "email"
-  ],
-  "author": "krossdev",
-  "license": "Apache-2.0",
   "dependencies": {
     "mjml": "^4.11.0"
   }

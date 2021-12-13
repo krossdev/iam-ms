@@ -4,13 +4,15 @@
 package action
 
 import (
+	"html/template"
 	"net/mail"
+	"os"
 
 	"github.com/krossdev/iam-ms/msc"
 	"github.com/krossdev/iam-ms/mss/email"
-	"github.com/pkg/errors"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,24 +34,19 @@ func sendVerifyEmail(payload interface{}, l *logrus.Entry) (interface{}, error) 
 		return nil, errors.Wrap(err, "email address invalid")
 	}
 	// generate mail body
-	body := `
-	<html>
-		<head>
-		</head>
-		<body>
-			<h1>REPLY</h1>
-			<img width='64px' height='64px' src="cid:logo" alt='Logo' />
-			<img src='https://miro.medium.com/max/1400/1*3LEMkgStgOhX1kSi08oZhQ.jpeg'
-				width='32px' height='32px' />
-			<p>Here is some content</p>
-		</body>
-	</html>
-	`
+	t, err := template.New("email").Parse("")
+	if err != nil {
+		return nil, errors.Wrap(err, "parse mail template error")
+	}
+	if err = t.Execute(os.Stdout, &p); err != nil {
+		return nil, errors.Wrap(err, "generate mail content error")
+	}
 
 	// contract a mail message to send
-	m := email.HTMLMessage("Please verify your email address", body)
+	m := email.HTMLMessage("Please verify your email address", "")
 	m.AddTO(to)
 
+	// send mail
 	if err = m.Send(); err != nil {
 		l.WithError(err).Errorf("failed to send verify email to %s", to)
 		return nil, err
