@@ -11,6 +11,9 @@ import (
 	"github.com/google/uuid"
 )
 
+// semantic versioning, https://semver.org
+const Version = "0.0.3"
+
 // request data
 type Request struct {
 	Version string      `json:"version"` // protocol version
