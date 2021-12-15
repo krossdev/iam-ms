@@ -24,6 +24,7 @@ type Mta struct {
 	Port    int    `yaml:"port"`
 	SSLMode bool   `yaml:"sslmode"`
 	Sender  string `yaml:"sender"`
+	ReplyTo string `yaml:"replyto"`
 	User    string `yaml:"user"`
 	Passwd  string `yaml:"passwd"`
 }

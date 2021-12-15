@@ -13,11 +13,11 @@ build:
 
 # startup development server with default args
 dev: build
-	./kiam-ms -c .config/config.yaml
+	./kiam-ms -c .config/config.yaml -watch
 
 # startup development server with customized args
 run:
-	go run -ldflags='$(LDFLAGS)' -tags '${TAGS}' . -c .config/config.yaml
+	go run -ldflags='$(LDFLAGS)' -tags '${TAGS}' . -c .config/config.yaml -watch
 
 # run test
 test:

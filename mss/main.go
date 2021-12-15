@@ -15,12 +15,14 @@ import (
 	"github.com/krossdev/iam-ms/mss/email"
 	"github.com/krossdev/iam-ms/mss/xlog"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/pkg/errors"
 )
 
 // command line options
 var (
 	configFile = flag.String("c", "./config.yaml", "Configuration `filepath`")
+	watch      = flag.Bool("watch", false, "Watch configuration file change to reload")
 )
 
 func main() {
@@ -30,6 +32,11 @@ func main() {
 	// setup everythings
 	if err := load(); err != nil {
 		xlog.X.WithError(err).Fatalf("Startup failure")
+	}
+
+	// watch configuration file change to reload
+	if *watch {
+		go watchConfig(*configFile)
 	}
 
 	// wait for shutdown
@@ -89,4 +96,37 @@ func load() error {
 		return errors.Wrap(err, "failed to subscribe action subject")
 	}
 	return nil
+}
+
+// watch config file change to reload
+func watchConfig(file string) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		xlog.X.WithError(err).Error("watch config failed")
+	}
+	defer watcher.Close()
+
+	if err = watcher.Add(file); err != nil {
+		xlog.X.WithError(err).Error("watch config failed")
+	}
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return
+			}
+			if event.Op&fsnotify.Write == fsnotify.Write {
+				xlog.X.Info("configuration file has changed, try to reload...")
+
+				if err := load(); err != nil {
+					xlog.X.WithError(err).Error("reload failed")
+				}
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return
+			}
+			xlog.X.WithError(err).Error("watch config error")
+		}
+	}
 }

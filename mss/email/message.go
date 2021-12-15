@@ -24,10 +24,10 @@ import (
 
 // Attachment represents an email attachment.
 type Attachment struct {
-	Filename string
-	Data     []byte
-	Inline   bool
-	Cid      string
+	Filename  string // filename
+	Data      []byte // attachment data
+	Inline    bool   // is inline
+	ContentId string // content id
 }
 
 // Header represents an additional email header.
@@ -58,10 +58,10 @@ func (m *Message) attach(file string, inline bool, cid string) error {
 	_, filename := filepath.Split(file)
 
 	m.Attachments[filename] = &Attachment{
-		Filename: filename,
-		Data:     data,
-		Inline:   inline,
-		Cid:      cid,
+		Filename:  filename,
+		Data:      data,
+		Inline:    inline,
+		ContentId: cid,
 	}
 	if inline {
 		m.hasInline = true
@@ -174,7 +174,7 @@ func (m *Message) bytes(sender *mail.Address) []byte {
 
 		// inline attachment give a content id so body can ref to it by cid:
 		if attachment.Inline {
-			buf.WriteString(fmt.Sprintf("Content-ID: <%s>\r\n", attachment.Cid))
+			buf.WriteString(fmt.Sprintf("Content-ID: <%s>\r\n", attachment.ContentId))
 			buf.WriteString(fmt.Sprintf(
 				"Content-Disposition: inline; filename=\"%s\"\r\n\r\n",
 				attachment.Filename,
@@ -286,6 +286,10 @@ func (m *Message) Send() error {
 	for _, mta := range mailConfig.Mtas {
 		st := time.Now()
 
+		// add reply to address
+		if len(m.ReplyTo) == 0 && len(mta.ReplyTo) > 0 {
+			m.ReplyTo = mta.ReplyTo
+		}
 		if err := m.send(&mta); err != nil {
 			xlog.X.Warnf("send mail with '%s' error: %v", mta.Name, err)
 			continue
@@ -384,8 +388,8 @@ func (m *Message) sendWithSSL(mta *config.Mta, from *mail.Address, to []string) 
 func newMessage(subject string, body string, bodyType string) *Message {
 	return &Message{
 		Subject:     subject,
-		Body:        body,
 		BodyType:    bodyType,
+		Body:        body,
 		Attachments: make(map[string]*Attachment),
 	}
 }

@@ -14,7 +14,7 @@ log:
   # Airbrake hook configuration, comment to disable it
   # https://airbrake.io
   #
-  # 'pid' is project id, it's a integer number, and 'key' is project key,
+  # pid is project id(a number), and key is project key,
   # you can get them from your airbrade account
   #
   airbrake:
@@ -49,8 +49,10 @@ mail:
       port: 465
       # connection mode
       sslmode: true
-      # sender address(RFC 5322), can contain display name like 'name <sender@host.com>'
-      sender: youname <noreply@host.com>
+      # sender address, can contain display name like 'name <sender@host.com>'
+      sender: yourname <noreply@host.com>
+      # reply to address, optional
+      replyto: name <reply@host.com>
       # authenticate user, optional
       user: auth user
       # authenticate password
