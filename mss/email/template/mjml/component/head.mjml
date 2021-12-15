@@ -4,6 +4,7 @@
     <mj-attributes>
       <mj-all font-family="Verdana, Arial, Calibri, Times New Roman" />
       <<mj-text font-size="15px" line-height="1.5" />
+      <<mj-section padding="0px" />
     </mj-attributes>
   </mj-head>
 </mjml>

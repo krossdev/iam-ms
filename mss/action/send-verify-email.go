@@ -39,24 +39,23 @@ func sendVerifyEmail(p interface{}, l *logrus.Entry) (interface{}, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "email address invalid")
 	}
-	subject := "Please verify your email address"
-
+	// inline logo cid identifer
 	logo_cid := strings.ReplaceAll(uuid.NewString(), "-", "")
 
 	templateData := email.TemplateData{
 		Logo:  template.URL("cid:" + logo_cid),
-		Title: subject,
+		Title: payload.Subject,
 	}
 	// data to execute template
-	execData := SendVerifyEmailTemplateData{payload, templateData}
+	data := SendVerifyEmailTemplateData{payload, templateData}
 
 	// generate mail content
-	content, err := email.ExecTemplate("verify-email", &execData)
+	content, err := email.ExecTemplate("verify-email", data.Locale, &data)
 	if err != nil {
 		return nil, err
 	}
 	// contract a mail message
-	m := email.HTMLMessage(subject, content)
+	m := email.HTMLMessage(data.Subject, content)
 	m.AddTO(to)
 
 	// inline logo

@@ -4,7 +4,7 @@
   "description": "Email template",
   "private": true,
   "scripts": {
-    "mjml": "mjml --read mjml/*.mjml -o html",
+    "compile": "mjml --read mjml/*.mjml -o html",
     "watch": "mjml --watch mjml/*.mjml -o html",
     "help": "mjml --help"
   },

@@ -4,6 +4,7 @@
 package msc
 
 import (
+	"fmt"
 	"net/mail"
 )
 
@@ -23,19 +24,19 @@ const (
 )
 
 type SendVerifyEmailPayload struct {
-	Name string `json:"name"` // user name
-	To   string `json:"to"`   // recipient address
-	Href string `json:"href"` // verify url
+	Subject string `json:"subject"` // mail subject
+	Name    string `json:"name"`    // recipient name
+	To      string `json:"to"`      // recipient address
+	Href    string `json:"href"`    // verify url
+	Locale  string `json:"locale"`  // i18n locale
 }
 
-func SendVerifyEmail(name, to, href string) error {
-	if _, err := mail.ParseAddress(to); err != nil {
-		return err
+func SendVerifyEmail(payload *SendVerifyEmailPayload) error {
+	if payload == nil {
+		return fmt.Errorf("payload is empty")
 	}
-	payload := SendVerifyEmailPayload{
-		Name: name,
-		To:   to,
-		Href: href,
+	if _, err := mail.ParseAddress(payload.To); err != nil {
+		return err
 	}
 	_, err := requestAction(ASendVerifyEmail, &payload)
 	return err

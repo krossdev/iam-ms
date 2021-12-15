@@ -1,4 +1,4 @@
-<mjml lang="en">
+<mjml lang="zh_CN">
   <mj-head>
     <mj-include path="./component/head.mjml" />
   </mj-head>
@@ -6,8 +6,8 @@
     <mj-include path="./component/header.mjml" />
     <mj-section padding="0px">
       <mj-column>
-        <mj-text>Hey {{.Name}}!</mj-text>
-        <mj-text>Please verify your email address: {{.To}} </mj-text>
+        <mj-text>你好 {{.Name}}!</mj-text>
+        <mj-text>请验证你的邮箱地址：{{.To}} </mj-text>
       </mj-column>
     </mj-section>
     <mj-section>
@@ -18,14 +18,14 @@
           font-family='Arial'
           font-size="16px"
           href="{{.Href}}">
-          Verify email address
+          验证邮箱地址
         </mj-button>
       </mj-column>
     </mj-section>
     <mj-section>
       <mj-column>
         <mj-text align="center" font-size="12px">
-          Will expire in 30 minutes.
+          30分钟内有效。
         </mj-text>
       </mj-column>
     </mj-section>
@@ -37,17 +37,15 @@
     <mj-section>
       <mj-column>
         <mj-text font-size="12px" color="#888">
-          Button not working? Paste the following link into your browser:
-          {{.Href}}
+          按钮不起作用？请将下面的链接粘贴到浏览器中：{{.Href}}
         </mj-text>
       </mj-column>
     </mj-section>
     <mj-section>
       <mj-column>
         <mj-text font-size="12px" color="#888">
-          You're receiving this email because you requested to verification this
-          email address. If you don't do this, please change your password and
-          inform the system administrator.
+          之所以收到这封邮件是因为你请求验证这个邮箱地址。如果你没有进行此操作，
+          请修改你的密码并通知系统管理员。
         </mj-text>
       </mj-column>
     </mj-section>
