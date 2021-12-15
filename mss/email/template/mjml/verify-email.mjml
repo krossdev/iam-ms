@@ -27,7 +27,7 @@
     <mj-section>
       <mj-column>
         <mj-text align="center" font-size="12px">
-          Will expire in 30 minutes.
+          Will expire in 24 hours.
         </mj-text>
       </mj-column>
     </mj-section>
