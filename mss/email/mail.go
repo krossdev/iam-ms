@@ -13,9 +13,6 @@ var mailConfig *config.Mail
 
 // propagation configuration from config file
 func Setup(conf *config.Mail) {
-	// set template root dir
-	// template.SetRoot(conf.TemplateDir)
-
 	// sort the mta, take preferred mta to the first
 	if len(conf.PreferredMta) > 0 {
 		found := false

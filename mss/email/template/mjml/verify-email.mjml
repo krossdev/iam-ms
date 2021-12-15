@@ -1,6 +1,7 @@
 <mjml lang="en">
   <mj-head>
     <mj-include path="./component/head.mjml" />
+    <<mj-preview>Will expire in 30 minutes.</mj-preview>
   </mj-head>
   <mj-body>
     <mj-include path="./component/header.mjml" />

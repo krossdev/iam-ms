@@ -26,7 +26,7 @@ func actionHandler(subject, reply string, qt *msc.Request) {
 		"reqid":   qt.ReqId,
 		"action":  qt.Action,
 	})
-	l.Infof("request %s on %s, reply to = %s", qt.Action, subject, reply)
+	l.Infof("receive request '%s' on '%s'", qt.Action, subject)
 
 	// reply subject(inbox) cannot be empty
 	if len(reply) == 0 {
@@ -66,7 +66,7 @@ func actionHandler(subject, reply string, qt *msc.Request) {
 		replyTo(msc.ReplyError, err.Error(), nil)
 		return
 	}
-	l.Infof("request %s done!", qt.Action)
+	l.Infof("request '%s' is done! reply to %s", qt.Action, reply)
 
 	replyTo(msc.ReplyOk, "ok", payload)
 }

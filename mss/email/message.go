@@ -284,12 +284,17 @@ func (m *Message) Send() error {
 
 	// try all of mtas one by one, until meet someone which can send the mail
 	for _, mta := range mailConfig.Mtas {
+		st := time.Now()
+
 		if err := m.send(&mta); err != nil {
 			xlog.X.Warnf("send mail with '%s' error: %v", mta.Name, err)
 			continue
 		}
 		sent = true
-		xlog.X.Infof("mail has sent with '%s' succeed", mta.Name)
+
+		xlog.X.Infof("mail has been sent with '%s', take %dms",
+			mta.Name, time.Since(st).Milliseconds(),
+		)
 		break
 	}
 	if !sent {
