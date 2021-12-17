@@ -1,17 +1,13 @@
 <mjml lang="zh_CN">
   <mj-head>
     <mj-include path="../component/head.mjml" />
-    <mj-preview>24小时内有效。</mj-preview>
+    <mj-preview>{{.Expire}}。</mj-preview>
   </mj-head>
   <mj-body>
     <mj-include path="../component/header.mjml" />
-    <mj-section padding="0px">
-      <mj-column>
-        <mj-text font-size="16px">你好 {{.Name}}!</mj-text>
-      </mj-column>
-    </mj-section>
     <mj-section>
       <mj-column>
+        <mj-text font-size="16px">你好 {{.Name}}!</mj-text>
         <mj-text>
           为了保护你的 KrossIAM 账户安全，我们需要验证你的邮箱地址:
           <a href="mailto:{{.To}}">{{.To}}</a>。
@@ -25,7 +21,7 @@
           href="{{.Href}}">
           验证邮箱地址
         </mj-button>
-        <mj-text align="center" font-size="12px"> 24小时内有效 </mj-text>
+        <mj-text align="center" font-size="12px">{{.Expire}}</mj-text>
       </mj-column>
     </mj-section>
     <mj-section padding-top="5px">
@@ -37,7 +33,7 @@
         </mj-text>
         <mj-text font-size="12px" color="#888">
           之所以收到这封邮件是因为你最近创建了一个新的 KrossIAM
-          账户或者添加了新的邮箱地址。 如果你没有进行以上操作，请忽略此邮件。
+          账户或者添加了新的邮箱地址到你的账户。 如果你没有进行以上操作，请忽略此邮件。
         </mj-text>
       </mj-column>
     </mj-section>

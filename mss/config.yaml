@@ -2,6 +2,7 @@
 # https://github.com/krossdev/iam-ms/blob/main/LICENSE
 
 # Debug mode or not
+#
 debug: true
 
 # Log parameters

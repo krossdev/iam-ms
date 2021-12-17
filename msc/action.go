@@ -29,6 +29,7 @@ type SendVerifyEmailPayload struct {
 	To      string `json:"to"`      // recipient address
 	Href    string `json:"href"`    // verify url
 	Locale  string `json:"locale"`  // i18n locale
+	Expire  string `json:"expire"`  // expire
 }
 
 func SendVerifyEmail(payload *SendVerifyEmailPayload) error {

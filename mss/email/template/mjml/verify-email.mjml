@@ -1,17 +1,13 @@
 <mjml lang="en">
   <mj-head>
     <mj-include path="./component/head.mjml" />
-    <mj-preview>Will expire in 24 hours.</mj-preview>
+    <mj-preview>{{.Expire}}.</mj-preview>
   </mj-head>
   <mj-body>
     <mj-include path="./component/header.mjml" />
-    <mj-section padding="0px">
-      <mj-column>
-        <mj-text>Hey {{.Name}}!</mj-text>
-      </mj-column>
-    </mj-section>
     <mj-section>
       <mj-column>
+        <mj-text>Hey {{.Name}}!</mj-text>
         <mj-text>
           To secure your KrossIAM account, we just need to verify your email
           address:
@@ -27,9 +23,7 @@
         >
           Verify email address
         </mj-button>
-        <mj-text align="center" font-size="12px">
-          Will expire in 24 hours
-        </mj-text>
+        <mj-text align="center" font-size="12px">{{.Expire}}</mj-text>
       </mj-column>
     </mj-section>
     <mj-section padding-top="5px">
@@ -41,8 +35,8 @@
         </mj-text>
         <mj-text font-size="12px" color="#888">
           You're receiving this email because you recently created a new
-          KrossIAM account or added a new email address. If this wasn't you,
-          please ignore this email.
+          KrossIAM account or added a new email address to your account.
+          If this wasn't you, please ignore this email.
         </mj-text>
       </mj-column>
     </mj-section>

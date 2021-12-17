@@ -97,7 +97,9 @@
 </head>
 
 <body style="word-spacing:normal;">
-  <div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;"> 24小时内有效。 </div>
+  <div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
+    {{.Expire}}。
+  </div>
   <div style="">
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     <div style="margin:0px auto;max-width:600px;">
@@ -136,7 +138,7 @@
       <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
         <tbody>
           <tr>
-            <td style="direction:ltr;font-size:0px;padding:0px;text-align:center;">
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
               <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
               <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
                 <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
@@ -146,25 +148,6 @@
                         <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:16px;line-height:1.5;text-align:left;color:#000000;">你好 {{.Name}}!</div>
                       </td>
                     </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table><![endif]-->
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-    <div style="margin:0px auto;max-width:600px;">
-      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-        <tbody>
-          <tr>
-            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
-              <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
-              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                  <tbody>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:15px;line-height:1.5;text-align:left;color:#000000;">为了保护你的 KrossIAM 账户安全，我们需要验证你的邮箱地址: <a href="mailto:{{.To}}">{{.To}}</a>。</div>
@@ -185,7 +168,7 @@
                     </tr>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:12px;line-height:1.5;text-align:center;color:#000000;">24小时内有效</div>
+                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:12px;line-height:1.5;text-align:center;color:#000000;">{{.Expire}}</div>
                       </td>
                     </tr>
                   </tbody>
@@ -222,7 +205,7 @@
                     </tr>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:12px;line-height:1.5;text-align:left;color:#888888;">之所以收到这封邮件是因为你最近创建了一个新的 KrossIAM 账户或者添加了新的邮箱地址。 如果你没有进行以上操作，请忽略此邮件。</div>
+                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:12px;line-height:1.5;text-align:left;color:#888888;">之所以收到这封邮件是因为你最近创建了一个新的 KrossIAM 账户或者添加了新的邮箱地址到你的账户。 如果你没有进行以上操作，请忽略此邮件。</div>
                       </td>
                     </tr>
                   </tbody>

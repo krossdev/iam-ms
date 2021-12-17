@@ -124,11 +124,11 @@ func (m *Message) bytes(sender *mail.Address) []byte {
 	buf.WriteString(fmt.Sprintf("Date: %s\r\n", t.Format(time.RFC1123Z)))
 
 	buf.WriteString(fmt.Sprintf(
-		"To: %s\r\n", strings.Join(recipients(true, m.To), ","),
+		"To: %s\r\n", strings.Join(addrs2strings(true, m.To), ","),
 	))
 	if len(m.Cc) > 0 {
 		buf.WriteString(fmt.Sprintf(
-			"Cc: %s\r\n", strings.Join(recipients(true, m.Cc), ","),
+			"Cc: %s\r\n", strings.Join(addrs2strings(true, m.Cc), ","),
 		))
 	}
 
@@ -341,7 +341,7 @@ func (m *Message) send(mta *config.Mta) error {
 	if err != nil {
 		return fmt.Errorf("parse sender address '%s' error: %v", mta.Sender, err)
 	}
-	to := recipients(false, m.To, m.Cc, m.Bcc)
+	to := addrs2strings(false, m.To, m.Cc, m.Bcc)
 
 	if mta.SSLMode {
 		return m.sendWithSSL(mta, from, to)
@@ -424,10 +424,10 @@ func HTMLMessage(subject string, body string) *Message {
 	return newMessage(subject, body, "text/html")
 }
 
-// recipients convert mail.Address array to string array
+// addrs2strings convert mail.Address array to string array
 //   with name: Name <mail@addr.com>
 //   with no name: mail@addr.com
-func recipients(withName bool, args ...[]*mail.Address) []string {
+func addrs2strings(withName bool, args ...[]*mail.Address) []string {
 	var list []string
 
 	for _, arg := range args {
