@@ -4,11 +4,17 @@
   "description": "Email template",
   "private": true,
   "scripts": {
-    "compile": "mjml --read mjml/*.mjml -o html",
-    "watch": "mjml --watch mjml/*.mjml -o html",
-    "help": "mjml --help"
+    "compile": "concurrently npm:compile-*",
+    "watch": "concurrently npm:watch-*",
+    "compile-default": "mjml --read mjml/*.mjml -o html",
+    "compile-zh-cn": "mjml --read mjml/zh-cn/*.mjml -o html/zh-cn",
+    "watch-default": "mjml --watch mjml/*.mjml -o html",
+    "watch-zh-cn": "mjml --watch mjml/zh-cn/*.mjml -o html/zh-cn"
   },
   "dependencies": {
     "mjml": "^4.11.0"
+  },
+  "devDependencies": {
+    "concurrently": "^6.4.0"
   }
 }

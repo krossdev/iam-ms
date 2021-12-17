@@ -24,20 +24,21 @@ const (
 )
 
 // load template from file, support i18n
-func ExecTemplate(tname string, locale string, data interface{}) (string, error) {
+func ExecTemplate(name string, locale string, data interface{}) (string, error) {
 	var tpath string
+
+	tname := fmt.Sprintf("%s.html", name)
 
 	// lookup locale template first
 	if len(locale) > 0 {
-		lname := fmt.Sprintf("%s_%s.html", tname, strings.ToLower(locale))
-		lpath := path.Join(mailConfig.TemplateDir, lname)
+		lpath := path.Join(mailConfig.TemplateDir, strings.ToLower(locale), tname)
 		if _, err := os.Stat(lpath); err == nil {
 			tpath = lpath
 		}
 	}
 	// no locale template found, fallback to default template
 	if len(tpath) == 0 {
-		tpath = path.Join(mailConfig.TemplateDir, fmt.Sprintf("%s.html", tname))
+		tpath = path.Join(mailConfig.TemplateDir, tname)
 	}
 
 	t, err := template.ParseFiles(tpath)

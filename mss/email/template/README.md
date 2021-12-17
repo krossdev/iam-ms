@@ -48,7 +48,7 @@ m.Inline("/path/to/logo.png", logo_cid)
 m.Send(...)
 ```
 
-> There many mail client(web, desktop, mobile), is `cid` work well
+> There many mail client(web, desktop, mobile), does `cid` work well
 > on all of these cients is a question.
 > I just test it on few client, Gmail has no problem, Apple Mail(Desktop)
 > can show the image but cannot resize it, IPhone Mail has no this problem.
@@ -62,7 +62,13 @@ recommend in production deploy, use image url instead.*
 ### Generate .html from .mjml
 
 ```
-yarn run mjml
+yarn run compile
+```
+
+### Watch .mjml change to update .html in real time
+
+```
+yarn run watch
 ```
 
 ## Tools

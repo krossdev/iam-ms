@@ -1,10 +1,10 @@
 <mjml lang="zh_CN">
   <mj-head>
-    <mj-include path="./component/head.mjml" />
-    <mj-preview>30分钟内有效。</mj-preview>
+    <mj-include path="../component/head.mjml" />
+    <mj-preview>24小时内有效。</mj-preview>
   </mj-head>
   <mj-body>
-    <mj-include path="./component/header.mjml" />
+    <mj-include path="../component/header.mjml" />
     <mj-section padding="0px">
       <mj-column>
         <mj-text font-size="16px">你好 {{.Name}}!</mj-text>
@@ -22,8 +22,7 @@
           font-weight="500"
           font-family="Arial"
           font-size="16px"
-          href="{{.Href}}"
-        >
+          href="{{.Href}}">
           验证邮箱地址
         </mj-button>
         <mj-text align="center" font-size="12px"> 24小时内有效 </mj-text>
