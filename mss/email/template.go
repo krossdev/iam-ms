@@ -53,12 +53,12 @@ func ExecTemplate(name string, locale string, data interface{}) (string, error) 
 	return out.String(), nil
 }
 
-// return image path in template dir
+// return full image path in template directory
 func ImagePath(name string) string {
 	return path.Join(mailConfig.TemplateDir, name)
 }
 
-// return logo path in template dir
+// return full logo path in template directory
 func LogoPath() string {
 	return ImagePath("logo.png")
 }

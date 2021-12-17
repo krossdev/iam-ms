@@ -290,6 +290,26 @@ func (m *Message) Send() error {
 		if len(m.ReplyTo) == 0 && len(mta.ReplyTo) > 0 {
 			m.ReplyTo = mta.ReplyTo
 		}
+		// add cc addresses
+		if len(mta.CC) > 0 {
+			for _, cc := range mta.CC {
+				addr, err := mail.ParseAddress(cc)
+				if err != nil {
+					return fmt.Errorf("cc address '%s' of '%s' invalid", cc, mta.Name)
+				}
+				m.Cc = append(m.Cc, addr)
+			}
+		}
+		// add bcc addresses
+		if len(mta.BCC) > 0 {
+			for _, bcc := range mta.BCC {
+				addr, err := mail.ParseAddress(bcc)
+				if err != nil {
+					return fmt.Errorf("bcc address '%s' of '%s' invalid", bcc, mta.Name)
+				}
+				m.Bcc = append(m.Bcc, addr)
+			}
+		}
 		if err := m.send(&mta); err != nil {
 			xlog.X.Warnf("send mail with '%s' error: %v", mta.Name, err)
 			continue

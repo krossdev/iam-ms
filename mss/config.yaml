@@ -37,6 +37,10 @@ mail:
   #
   template_dir: email/template/html
 
+  # Preferred mta, optional, specify which mta will be try first
+  #
+  preferred_mta: mailcatcher
+
   # MTAs(mail transfer agent), You can add multiple mta as fallbacks
   #
   mtas:
@@ -53,6 +57,12 @@ mail:
       sender: yourname <noreply@host.com>
       # reply to address, optional
       replyto: name <reply@host.com>
+      # cc addresses
+      cc:
+        - name <cc1@host.com>
+      # bcc addresses
+      bcc:
+        - name <cc1@host.com>
       # authenticate user, optional
       user: auth user
       # authenticate password

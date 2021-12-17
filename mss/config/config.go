@@ -19,14 +19,16 @@ type Log struct {
 }
 
 type Mta struct {
-	Name    string `yaml:"name"`
-	Host    string `yaml:"host"`
-	Port    int    `yaml:"port"`
-	SSLMode bool   `yaml:"sslmode"`
-	Sender  string `yaml:"sender"`
-	ReplyTo string `yaml:"replyto"`
-	User    string `yaml:"user"`
-	Passwd  string `yaml:"passwd"`
+	Name    string   `yaml:"name"`
+	Host    string   `yaml:"host"`
+	Port    int      `yaml:"port"`
+	SSLMode bool     `yaml:"sslmode"`
+	Sender  string   `yaml:"sender"`
+	ReplyTo string   `yaml:"replyto"`
+	CC      []string `yaml:"cc"`
+	BCC     []string `yaml:"bcc"`
+	User    string   `yaml:"user"`
+	Passwd  string   `yaml:"passwd"`
 }
 
 // Mail
