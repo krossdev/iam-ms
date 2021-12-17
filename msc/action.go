@@ -6,6 +6,7 @@ package msc
 import (
 	"fmt"
 	"net/mail"
+	"net/url"
 )
 
 const (
@@ -32,13 +33,24 @@ type SendVerifyEmailPayload struct {
 	Expire  string `json:"expire"`  // expire
 }
 
+// Ask message services to send a verify email
 func SendVerifyEmail(payload *SendVerifyEmailPayload) error {
 	if payload == nil {
 		return fmt.Errorf("payload is empty")
 	}
+	// validation to address
 	if _, err := mail.ParseAddress(payload.To); err != nil {
 		return err
 	}
-	_, err := requestAction(ASendVerifyEmail, &payload)
+	// validation href
+	u, err := url.Parse(payload.Href)
+	if err != nil {
+		return err
+	}
+	if !u.IsAbs() {
+		return fmt.Errorf("verify url invalid")
+	}
+	// send the request
+	_, err = requestAction(ASendVerifyEmail, payload)
 	return err
 }

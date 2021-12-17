@@ -5,7 +5,7 @@ This repo is message services component of KrossIAM.
 ## What is message services
 
 When KrossIAM need send some data to external world like email, SMS and so on,
-it is send a request to the message server, ask it to complete the job.
+it is send a request to the message services, ask it to complete the job.
 
 ## Why message services
 
@@ -15,7 +15,7 @@ the problem is lost the flexibility of message processing.
 For example, when some event happen, like user account login abnormal,
 we need notice user know this event, but how to notice? email? sms? or both?
 it is hard to decide, somebody like this but somebody like other.
-beacuse this, KrossIAM make no assumptions, just tell the message services
+beacuse of this, KrossIAM make no assumptions, just tell the message services
 this event happend, the message services decide how to do it next.
 
 ## Message broker
