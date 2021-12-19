@@ -23,6 +23,10 @@ type ActionIPLocation struct {
 	Engine  string `yaml:"engine"`
 }
 
+const (
+	IPLocationEngineGeoip = "geoip"
+)
+
 type ActionSendVerifyEmail struct {
 	Enabled bool `yaml:"enabled"`
 }

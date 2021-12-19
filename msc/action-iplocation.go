@@ -16,9 +16,12 @@ type IPLocationPayload struct {
 }
 
 type IPLocationReply struct {
-	Country string `json:"country"` // country name
-	City    string `json:"city"`    // city name
-	Address string `json:"address"` // full address
+	Continent string  `json:"continent"` // continent name
+	Country   string  `json:"country"`   // country name
+	City      string  `json:"city"`      // city name
+	Longitude float64 `json:"longitude"` // longitude
+	Latitude  float64 `json:"latitude"`  // latitude
+	TimeZone  string  `json:"timezone"`  // time zone
 }
 
 // Ask message services to lookup ip location
@@ -31,11 +34,8 @@ func IPLocation(payload *IPLocationPayload) (*IPLocationReply, error) {
 		return nil, fmt.Errorf("parse ip(%s) error", payload.IpAddr)
 	}
 	// loopback and private address cannot location
-	if ip.IsLoopback() {
-		return &IPLocationReply{City: "Localhost"}, nil
-	}
-	if ip.IsPrivate() {
-		return &IPLocationReply{City: "Local area network"}, nil
+	if ip.IsLoopback() || ip.IsPrivate() {
+		return nil, fmt.Errorf("ip(%s) is a private address", payload.IpAddr)
 	}
 
 	// send the request and wait for reply

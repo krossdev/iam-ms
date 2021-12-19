@@ -55,6 +55,7 @@ func subscribeAction(action string, handler ActionHandlerFunc, params interface{
 		}
 		logger.Infof("%s is done! reply to %s", subject, reply)
 
+		// must reply a message
 		replyTo(msc.ReplyOk, "ok", payload)
 	}
 	subject := fmt.Sprintf("%s.%s", msc.SubjectAction, action)
