@@ -14,6 +14,12 @@ import (
 // semantic versioning, https://semver.org
 const Version = "0.0.3"
 
+const (
+	SubjectAction = "kiam.console.action"
+	SubjectEvent  = "kiam.console.event"
+	SubjectAudit  = "kiam.console.audit"
+)
+
 // request data
 type Request struct {
 	Version string `json:"version"` // protocol version

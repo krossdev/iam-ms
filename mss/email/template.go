@@ -15,10 +15,11 @@ import (
 )
 
 type TemplateData struct {
-	Logo  template.URL // logo url, can be a http url, a cid:xxx or a base64 dataurl
-	Title string       // title
+	Logo  template.URL // logo, can be http url, cid:xxx or base64 dataurl
+	Title string       // html page title
 }
 
+// template name constants
 const (
 	TemplateVerifyEmail = "verify-email"
 )
@@ -41,6 +42,7 @@ func ExecTemplate(name string, locale string, data interface{}) (string, error) 
 		tpath = path.Join(mailConfig.TemplateDir, tname)
 	}
 
+	// parse and execute the template with go http/template engine
 	t, err := template.ParseFiles(tpath)
 	if err != nil {
 		return "", errors.Wrap(err, "parse template error")
@@ -54,11 +56,11 @@ func ExecTemplate(name string, locale string, data interface{}) (string, error) 
 }
 
 // return full image path in template directory
-func ImagePath(name string) string {
+func TemplateImagePath(name string) string {
 	return path.Join(mailConfig.TemplateDir, name)
 }
 
 // return full logo path in template directory
-func LogoPath() string {
-	return ImagePath("logo.png")
+func TemplateLogoPath() string {
+	return TemplateImagePath("logo.png")
 }

@@ -74,7 +74,7 @@ func subscribeActionsWithConfig(c *config.ServiceActions) error {
 	subscribe := func(action string, params interface{}) error {
 		return subscribeAction(action, handlers[action], params)
 	}
-	// scbscribe action one by one which enabled
+	// scbscribe action which enabled
 	if c.IPLocation.Enabled {
 		if err := subscribe(msc.ActionIpLocation, &c.IPLocation); err != nil {
 			return err

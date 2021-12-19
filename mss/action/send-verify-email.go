@@ -56,7 +56,7 @@ func SendVerifyEmailHandler(p interface{}, params interface{}, l *logrus.Entry) 
 	m.AddTO(to)
 
 	// inline logo
-	m.Inline(email.LogoPath(), logo_cid)
+	m.Inline(email.TemplateLogoPath(), logo_cid)
 
 	// send mail
 	if err = m.Send(); err != nil {
