@@ -41,7 +41,19 @@ service:
   # Subscribe to action messages
   #
   actions:
-    send-verify-email: true
+    # Action to lookup ip location
+    #
+    ip_location:
+      # Enable or disable
+      enabled: true
+      # Which engine to use lookup ip location, may be 'geoip'
+      engine: geoip
+
+    # Action to send verify email
+    #
+    send_verify_email:
+      # Enable or disable
+      enabled: true
 
 # Mail configuration
 #
@@ -84,3 +96,13 @@ mail:
       user: auth user
       # authenticate password
       passwd: auth password
+
+# Geoip configuration
+#
+geoip:
+  # Geoip database file(*.mmdb) path
+  #
+  # you can download the geoip database(.mmdb file) from:
+  # https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
+  #
+  path: ./GeoLite2-City_20211123/GeoLite2-City.mmdb

@@ -18,8 +18,18 @@ type Log struct {
 	}
 }
 
+type ActionIPLocation struct {
+	Enabled bool   `yaml:"enabled"`
+	Engine  string `yaml:"engine"`
+}
+
+type ActionSendVerifyEmail struct {
+	Enabled bool `yaml:"enabled"`
+}
+
 type ServiceActions struct {
-	SendVerifyEmail bool `yaml:"send-verify-email"`
+	IPLocation      ActionIPLocation      `yaml:"ip_location"`
+	SendVerifyEmail ActionSendVerifyEmail `yaml:"send_verify_email"`
 }
 
 // Service
@@ -50,12 +60,17 @@ type Mail struct {
 	PreferredMta  string `yaml:"preferred_mta"`
 }
 
+type Geoip struct {
+	Path string `yaml:"path"`
+}
+
 type Configuration struct {
 	Debug   bool     `yaml:"debug"`
 	Log     Log      `yaml:"log"`
 	Brokers []string `yaml:"brokers"`
 	Service Service  `yaml:"service"`
 	Mail    Mail     `yaml:"mail"`
+	Geoip   Geoip    `yaml:"geoip"`
 }
 
 // Load configuration from file

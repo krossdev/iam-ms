@@ -14,10 +14,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ActionHandlerFunc func(payload interface{}, l *logrus.Entry) (interface{}, error)
+type ActionHandlerFunc func(payload interface{}, params interface{}, l *logrus.Entry) (interface{}, error)
 
 // subscribe to action subject
-func subscribeAction(action string, handler ActionHandlerFunc) error {
+func subscribeAction(action string, handler ActionHandlerFunc, params interface{}) error {
 	actionHandler := func(subject string, reply string, qt *msc.Request) {
 		logger := xlog.X.WithFields(logrus.Fields{
 			"version": qt.Version,
@@ -47,7 +47,7 @@ func subscribeAction(action string, handler ActionHandlerFunc) error {
 			return
 		}
 		// call handler
-		payload, err := handler(qt.Payload, logger)
+		payload, err := handler(qt.Payload, params, logger)
 		if err != nil {
 			logger.WithError(err).Errorf("action %s execute error", subject)
 			replyTo(msc.ReplyError, err.Error(), nil)
@@ -59,7 +59,7 @@ func subscribeAction(action string, handler ActionHandlerFunc) error {
 	}
 	subject := fmt.Sprintf("%s.%s", msc.SubjectAction, action)
 
-	xlog.X.Tracef("subscribe on %s ...", subject)
+	xlog.X.Tracef("subscribed on %s ...", subject)
 
 	_, err := conn.Subscribe(subject, actionHandler)
 	return err
@@ -67,9 +67,21 @@ func subscribeAction(action string, handler ActionHandlerFunc) error {
 
 // subscribe actions
 func subscribeActionsWithConfig(c *config.ServiceActions) error {
-	if c.SendVerifyEmail {
-		err := subscribeAction(msc.ActionSendVerifyEmail, action.SendVerifyEmailHandler)
-		if err != nil {
+	handlers := map[string]ActionHandlerFunc{
+		msc.ActionIpLocation:      action.IPLocationHandler,
+		msc.ActionSendVerifyEmail: action.SendVerifyEmailHandler,
+	}
+	subscribe := func(action string, params interface{}) error {
+		return subscribeAction(action, handlers[action], params)
+	}
+	// scbscribe action one by one which enabled
+	if c.IPLocation.Enabled {
+		if err := subscribe(msc.ActionIpLocation, &c.IPLocation); err != nil {
+			return err
+		}
+	}
+	if c.SendVerifyEmail.Enabled {
+		if err := subscribe(msc.ActionSendVerifyEmail, &c.SendVerifyEmail); err != nil {
 			return err
 		}
 	}

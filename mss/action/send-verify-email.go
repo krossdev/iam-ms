@@ -24,7 +24,7 @@ type SendVerifyEmailTemplateData struct {
 }
 
 // send-verify-email action handler
-func SendVerifyEmailHandler(p interface{}, l *logrus.Entry) (interface{}, error) {
+func SendVerifyEmailHandler(p interface{}, params interface{}, l *logrus.Entry) (interface{}, error) {
 	var payload msc.SendVerifyEmailPayload
 
 	// convert map to struct
@@ -60,8 +60,7 @@ func SendVerifyEmailHandler(p interface{}, l *logrus.Entry) (interface{}, error)
 
 	// send mail
 	if err = m.Send(); err != nil {
-		l.WithError(err).Errorf("failed to send verify email to %s", to)
-		return nil, err
+		return nil, errors.Wrapf(err, "failed to send verify email to %s", to)
 	}
 	return nil, nil
 }

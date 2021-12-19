@@ -5,8 +5,11 @@ package msc
 
 import (
 	"fmt"
+	"net"
 	"net/mail"
 	"net/url"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 const (
@@ -22,7 +25,8 @@ func requestAction(action string, payload interface{}) (interface{}, error) {
 }
 
 const (
-	ActionSendVerifyEmail = "send-verify-email"
+	ActionSendVerifyEmail = "sendverifyemail"
+	ActionIpLocation      = "iplocation"
 )
 
 type SendVerifyEmailPayload struct {
@@ -32,6 +36,16 @@ type SendVerifyEmailPayload struct {
 	Href    string `json:"href"`    // verify url
 	Locale  string `json:"locale"`  // i18n locale
 	Expire  string `json:"expire"`  // expire
+}
+
+type IPLocationPayload struct {
+	IpAddr string `json:"ipaddr"` // ip address to lookup
+	Locale string `json:"locale"` // i18n locale
+}
+
+type IPLocationReply struct {
+	Country string `json:"country"` // country name
+	City    string `json:"city"`    // city name
 }
 
 // Ask message services to send a verify email
@@ -54,4 +68,42 @@ func SendVerifyEmail(payload *SendVerifyEmailPayload) error {
 	// send the request
 	_, err = requestAction(ActionSendVerifyEmail, payload)
 	return err
+}
+
+// Ask message services to lookup ip location
+func IPLocation(payload *IPLocationPayload) (*IPLocationReply, error) {
+	if payload == nil {
+		return nil, fmt.Errorf("payload is empty")
+	}
+	ip := net.ParseIP(payload.IpAddr)
+	if ip == nil {
+		return nil, fmt.Errorf("parse ip(%s) error", payload.IpAddr)
+	}
+	// if ip.IsLoopback() {
+	// 	return i18n.P(c, "Localhost"), nil
+	// }
+	// if ip.IsPrivate() {
+	// 	return i18n.P(c, "Local area network"), nil
+	// }
+	// city, err := geoip.City(ip)
+	// if err != nil {
+	// 	return "", err
+	// }
+	// arr := []string{
+	// 	geoip.CountryName(city, i18n.Language(c)),
+	// 	geoip.CityName(city, i18n.Language(c)),
+	// }
+	// return strings.TrimRight(strings.Join(arr, ","), ","), nil
+
+	// send the request and wait for reply
+	rp, err := requestAction(ActionIpLocation, payload)
+	if err != nil {
+		return nil, err
+	}
+	var reply IPLocationReply
+
+	if err := mapstructure.Decode(rp, &reply); err != nil {
+		return nil, err
+	}
+	return &reply, nil
 }

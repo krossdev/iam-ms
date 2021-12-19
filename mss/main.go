@@ -13,6 +13,7 @@ import (
 	"github.com/krossdev/iam-ms/msc"
 	"github.com/krossdev/iam-ms/mss/config"
 	"github.com/krossdev/iam-ms/mss/email"
+	"github.com/krossdev/iam-ms/mss/geoip"
 	"github.com/krossdev/iam-ms/mss/xlog"
 
 	"github.com/fsnotify/fsnotify"
@@ -52,6 +53,7 @@ func main() {
 			if s == syscall.SIGHUP {
 				xlog.X.Info("receive SIGHUP, try to reload...")
 
+				// reload server
 				if err := load(); err != nil {
 					xlog.X.WithError(err).Error("reload failed")
 				}
@@ -60,7 +62,7 @@ func main() {
 			xlog.X.Infof("receive %s signal, shutdown now...", s.String())
 
 			disconnect() // disconnect from message broker
-			wg.Done()
+			wg.Done()    // quit the app
 			break
 		}
 	}()
@@ -70,7 +72,6 @@ func main() {
 }
 
 // (re)load server
-// when receive SIGHUP will call this function to reload server
 func load() error {
 	// parse configuration file
 	conf, err := config.Load(*configFile)
@@ -85,6 +86,9 @@ func load() error {
 
 	// propagation mail configuration
 	email.Setup(&conf.Mail)
+
+	// propagation geoip configuration
+	geoip.Setup(&conf.Geoip)
 
 	// connect to message border
 	if err = reconnect(conf.Brokers); err != nil {
