@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Kross IAM Project.
+// https://github.com/krossdev/iam-ms/blob/main/LICENSE
+//
 package msc
 
 import (
@@ -6,7 +9,7 @@ import (
 	"net/url"
 )
 
-type SendVerifyEmailPayload struct {
+type AccountAddEmailPayload struct {
 	Subject string `json:"subject"` // mail subject
 	Name    string `json:"name"`    // recipient name
 	To      string `json:"to"`      // recipient address
@@ -15,8 +18,8 @@ type SendVerifyEmailPayload struct {
 	Expire  string `json:"expire"`  // expire
 }
 
-// Ask message services to send a verify email
-func SendVerifyEmail(payload *SendVerifyEmailPayload) error {
+// Publish account add email audit
+func AccountAddEmail(payload *AccountAddEmailPayload) error {
 	if payload == nil {
 		return fmt.Errorf("payload is empty")
 	}
@@ -33,6 +36,5 @@ func SendVerifyEmail(payload *SendVerifyEmailPayload) error {
 		return fmt.Errorf("verify url invalid")
 	}
 	// send the request
-	_, err = requestAction(ActionSendVerifyEmail, payload)
-	return err
+	return publishAudit(EventAccountAddEmail, payload)
 }

@@ -19,8 +19,8 @@ type Log struct {
 }
 
 type ActionIPLocation struct {
-	Enabled bool   `yaml:"enabled"`
-	Engine  string `yaml:"engine"`
+	Subscribe bool   `yaml:"subscribe"`
+	Engine    string `yaml:"engine"`
 }
 
 const (
@@ -28,7 +28,7 @@ const (
 )
 
 type ActionSendVerifyEmail struct {
-	Enabled bool `yaml:"enabled"`
+	Subscribe bool `yaml:"subscribe"`
 }
 
 type ServiceActions struct {

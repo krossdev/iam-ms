@@ -1,6 +1,3 @@
-// Copyright (c) 2021 Kross IAM Project.
-// https://github.com/krossdev/iam-ms/blob/main/LICENSE
-//
 package msc
 
 import "github.com/sirupsen/logrus"

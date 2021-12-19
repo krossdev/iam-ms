@@ -76,12 +76,12 @@ func subscribeActionsWithConfig(c *config.ServiceActions) error {
 		return subscribeAction(action, handlers[action], params)
 	}
 	// scbscribe action which enabled
-	if c.IPLocation.Enabled {
+	if c.IPLocation.Subscribe {
 		if err := subscribe(msc.ActionIpLocation, &c.IPLocation); err != nil {
 			return err
 		}
 	}
-	if c.SendVerifyEmail.Enabled {
+	if c.SendVerifyEmail.Subscribe {
 		if err := subscribe(msc.ActionSendVerifyEmail, &c.SendVerifyEmail); err != nil {
 			return err
 		}

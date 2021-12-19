@@ -44,16 +44,16 @@ service:
     # Action to lookup ip location
     #
     ip_location:
-      # Enable or disable
-      enabled: true
+      # Enable or disable subscribe
+      subscribe: true
       # Which engine to use lookup ip location, may be 'geoip'
       engine: geoip
 
     # Action to send verify email
     #
     send_verify_email:
-      # Enable or disable
-      enabled: true
+      # Enable or disable subscribe
+      subscribe: true
 
 # Mail configuration
 #
