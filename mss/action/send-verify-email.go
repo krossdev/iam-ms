@@ -17,17 +17,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func init() {
-	handlers[msc.ASendVerifyEmail] = sendVerifyEmail
-}
-
+// data pass to template execute
 type SendVerifyEmailTemplateData struct {
 	msc.SendVerifyEmailPayload
 	TemplateData email.TemplateData
 }
 
-// send-verify-email action
-func sendVerifyEmail(p interface{}, l *logrus.Entry) (interface{}, error) {
+// send-verify-email action handler
+func SendVerifyEmailHandler(p interface{}, l *logrus.Entry) (interface{}, error) {
 	var payload msc.SendVerifyEmailPayload
 
 	// convert map to struct

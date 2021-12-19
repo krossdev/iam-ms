@@ -91,8 +91,8 @@ func load() error {
 		return errors.Wrap(err, "failed to connect message borker")
 	}
 
-	// subscribe action subject
-	if err = subscribeAction(); err != nil {
+	// subscribe actions
+	if err = subscribeActionsWithConfig(&conf.Service.Actions); err != nil {
 		return errors.Wrap(err, "failed to subscribe action subject")
 	}
 	return nil

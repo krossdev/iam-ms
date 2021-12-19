@@ -16,10 +16,10 @@ const Version = "0.0.3"
 
 // request data
 type Request struct {
-	Version string      `json:"version"` // protocol version
-	Time    int64       `json:"time"`    // request timestamp, in microsecond
-	ReqId   string      `json:"reqid"`   // request id, unique
-	Action  string      `json:"action"`  // action
+	Version string `json:"version"` // protocol version
+	Time    int64  `json:"time"`    // request timestamp, in microsecond
+	ReqId   string `json:"reqid"`   // request id, unique
+	// Action  string      `json:"action"`  // action
 	Payload interface{} `json:"payload"` // payload
 }
 
@@ -46,12 +46,11 @@ const (
 )
 
 // make a request package
-func makeRequest(action string, payload interface{}) *Request {
+func makeRequest(payload interface{}) *Request {
 	return &Request{
 		Version: Version,
 		Time:    time.Now().UnixMicro(),
 		ReqId:   strings.ToLower(strings.ReplaceAll(uuid.NewString(), "-", "")),
-		Action:  action,
 		Payload: payload,
 	}
 }

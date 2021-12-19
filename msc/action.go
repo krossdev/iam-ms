@@ -17,11 +17,12 @@ const (
 
 // send request to action subject
 func requestAction(action string, payload interface{}) (interface{}, error) {
-	return broker.request(SubjectAction, action, payload)
+	subject := fmt.Sprintf("%s.%s", SubjectAction, action)
+	return broker.request(subject, payload)
 }
 
 const (
-	ASendVerifyEmail = "send-verify-email"
+	ActionSendVerifyEmail = "send-verify-email"
 )
 
 type SendVerifyEmailPayload struct {
@@ -51,6 +52,6 @@ func SendVerifyEmail(payload *SendVerifyEmailPayload) error {
 		return fmt.Errorf("verify url invalid")
 	}
 	// send the request
-	_, err = requestAction(ASendVerifyEmail, payload)
+	_, err = requestAction(ActionSendVerifyEmail, payload)
 	return err
 }

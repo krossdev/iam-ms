@@ -8,65 +8,70 @@ import (
 
 	"github.com/krossdev/iam-ms/msc"
 	"github.com/krossdev/iam-ms/mss/action"
+	"github.com/krossdev/iam-ms/mss/config"
 	"github.com/krossdev/iam-ms/mss/xlog"
 
 	"github.com/sirupsen/logrus"
 )
 
+type ActionHandlerFunc func(payload interface{}, l *logrus.Entry) (interface{}, error)
+
 // subscribe to action subject
-func subscribeAction() error {
-	_, err := conn.Subscribe(msc.SubjectAction, actionHandler)
+func subscribeAction(action string, handler ActionHandlerFunc) error {
+	actionHandler := func(subject string, reply string, qt *msc.Request) {
+		logger := xlog.X.WithFields(logrus.Fields{
+			"version": qt.Version,
+			"time":    qt.Time,
+			"reqid":   qt.ReqId,
+			"subject": subject,
+		})
+		logger.Infof("receive action request on %s", subject)
+
+		// reply subject(inbox) cannot be empty
+		if len(reply) == 0 {
+			err := fmt.Errorf("missing reply subject")
+			logger.WithError(err).Error("action request missing reply subject")
+			return
+		}
+		// function to reply message
+		replyTo := func(code int32, message string, payload interface{}) {
+			rp := msc.MakeReply(code, message, payload, qt.ReqId)
+			if err := conn.Publish(reply, &rp); err != nil {
+				logger.WithError(err).Errorf("failed to reply to %s", subject)
+			}
+		}
+		// check request
+		if perr := checkRequest(qt); perr != nil {
+			logger.WithError(perr.err).Error("action request validation error")
+			replyTo(perr.code, perr.Error(), nil)
+			return
+		}
+		// call handler
+		payload, err := handler(qt.Payload, logger)
+		if err != nil {
+			logger.WithError(err).Errorf("action %s execute error", subject)
+			replyTo(msc.ReplyError, err.Error(), nil)
+			return
+		}
+		logger.Infof("%s is done! reply to %s", subject, reply)
+
+		replyTo(msc.ReplyOk, "ok", payload)
+	}
+	subject := fmt.Sprintf("%s.%s", msc.SubjectAction, action)
+
+	xlog.X.Tracef("subscribe on %s ...", subject)
+
+	_, err := conn.Subscribe(subject, actionHandler)
 	return err
 }
 
-func actionHandler(subject, reply string, qt *msc.Request) {
-	l := xlog.X.WithFields(logrus.Fields{
-		"version": qt.Version,
-		"time":    qt.Time,
-		"reqid":   qt.ReqId,
-		"action":  qt.Action,
-	})
-	l.Infof("receive request '%s' on '%s'", qt.Action, subject)
-
-	// reply subject(inbox) cannot be empty
-	if len(reply) == 0 {
-		err := fmt.Errorf("missing reply subject")
-		l.WithError(err).Error("bad request")
-		return
-	}
-	// function to publish reply
-	replyTo := func(code int32, message string, payload interface{}) {
-		rp := msc.MakeReply(code, message, payload, qt.ReqId)
-		if err := conn.Publish(reply, &rp); err != nil {
-			l.WithError(err).Errorf("failed to reply to %s", qt.Action)
+// subscribe actions
+func subscribeActionsWithConfig(c *config.ServiceActions) error {
+	if c.SendVerifyEmail {
+		err := subscribeAction(msc.ActionSendVerifyEmail, action.SendVerifyEmailHandler)
+		if err != nil {
+			return err
 		}
 	}
-	if perr := checkRequest(qt); perr != nil {
-		l.WithError(perr.err).Error("bad request")
-		replyTo(perr.code, perr.Error(), nil)
-		return
-	}
-	if len(qt.Action) == 0 {
-		err := fmt.Errorf("request missing action")
-		l.WithError(err).Error("bad request")
-		replyTo(msc.ReplyNoAction, err.Error(), nil)
-		return
-	}
-	// dispatch the action
-	f := action.Find(qt.Action)
-	if f == nil {
-		err := fmt.Errorf("no register handler for %s", qt.Action)
-		l.WithError(err).Error("dispatch error")
-		replyTo(msc.ReplyNotImp, err.Error(), nil)
-		return
-	}
-	payload, err := f(qt.Payload, l)
-	if err != nil {
-		l.WithError(err).Error("dispatch error")
-		replyTo(msc.ReplyError, err.Error(), nil)
-		return
-	}
-	l.Infof("request '%s' is done! reply to %s", qt.Action, reply)
-
-	replyTo(msc.ReplyOk, "ok", payload)
+	return nil
 }

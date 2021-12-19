@@ -5,7 +5,7 @@
   </mj-head>
   <mj-body>
     <mj-include path="./component/header.mjml" />
-    <mj-section>
+    <mj-section padding-top="0px">
       <mj-column>
         <mj-text>Hey {{.Name}}!</mj-text>
         <mj-text>

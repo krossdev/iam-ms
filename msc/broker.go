@@ -78,21 +78,21 @@ func (b *Broker) maxPayloadSize() int64 {
 }
 
 // request is a wrapper to nats.Conn.Reqeust
-func (b *Broker) request(subject, action string, payload interface{}) (interface{}, error) {
+func (b *Broker) request(subject string, payload interface{}) (interface{}, error) {
 	if b.conn == nil || !b.conn.Conn.IsConnected() {
 		if err := b.connect(); err != nil {
 			return nil, err
 		}
 	}
-	qt := makeRequest(action, payload)
+	qt := makeRequest(payload)
 
 	l := logger.WithFields(logrus.Fields{
 		"version": qt.Version,
 		"time":    qt.Time,
 		"reqid":   qt.ReqId,
-		"action":  action,
+		"subject": subject,
 	})
-	l.Tracef("request %s on %s", action, subject)
+	l.Tracef("send request to %s", subject)
 
 	var rp Reply
 
@@ -107,12 +107,31 @@ func (b *Broker) request(subject, action string, payload interface{}) (interface
 
 	// if reply code is not ok, return err
 	if rp.Code != ReplyOk {
-		l.Errorf("request %s reply %d: %s, latency %.2fms",
-			action, rp.Code, rp.Message, float64(dt/1000),
+		l.Errorf("%s reply %d: %s, latency %.2fms",
+			subject, rp.Code, rp.Message, float64(dt/1000),
 		)
 		return nil, fmt.Errorf("%s", rp.Message)
 	}
-	l.Tracef("request %s reply ok, latency %.2fms", action, float64(dt/1000))
+	l.Tracef("%s reply ok, latency %.2fms", subject, float64(dt/1000))
 
 	return rp.Payload, nil
+}
+
+// publish is a wrapper to nats.Conn.Publish
+func (b *Broker) publish(subject string, payload interface{}) error {
+	if b.conn == nil || !b.conn.Conn.IsConnected() {
+		if err := b.connect(); err != nil {
+			return err
+		}
+	}
+	qt := makeRequest(payload)
+
+	l := logger.WithFields(logrus.Fields{
+		"version": qt.Version,
+		"time":    qt.Time,
+		"reqid":   qt.ReqId,
+	})
+	l.Tracef("publish to %s", subject)
+
+	return b.conn.Publish(subject, payload)
 }

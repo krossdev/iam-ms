@@ -27,6 +27,22 @@ log:
 brokers:
   - nats://localhost:4222
 
+# Services
+#
+service:
+  # Subscribe to event message
+  #
+  event: true
+
+  # Subscribe to audit message
+  #
+  audit: true
+
+  # Subscribe to action messages
+  #
+  actions:
+    send-verify-email: true
+
 # Mail configuration
 #
 mail:

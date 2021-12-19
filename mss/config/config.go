@@ -18,6 +18,17 @@ type Log struct {
 	}
 }
 
+type ServiceActions struct {
+	SendVerifyEmail bool `yaml:"send-verify-email"`
+}
+
+// Service
+type Service struct {
+	Event   bool           `yaml:"event"`
+	Audit   bool           `yaml:"audit"`
+	Actions ServiceActions `yaml:"actions"`
+}
+
 type Mta struct {
 	Name    string   `yaml:"name"`
 	Host    string   `yaml:"host"`
@@ -43,6 +54,7 @@ type Configuration struct {
 	Debug   bool     `yaml:"debug"`
 	Log     Log      `yaml:"log"`
 	Brokers []string `yaml:"brokers"`
+	Service Service  `yaml:"service"`
 	Mail    Mail     `yaml:"mail"`
 }
 
