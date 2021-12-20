@@ -1,14 +1,11 @@
-// Copyright (c) 2021 Kross IAM Project.
-// https://github.com/krossdev/iam-ms/blob/main/LICENSE
-//
-package msc
+package audit
 
 import (
 	"fmt"
 	"net/mail"
 )
 
-type AccountAddEmailAuditPayload struct {
+type AccountAddEmailPayload struct {
 	Userid string   `json:"userid"` // user id(name)
 	Email  string   `json:"email"`  // new email address
 	To     []string `json:"to"`     // recipient addresses
@@ -16,7 +13,7 @@ type AccountAddEmailAuditPayload struct {
 }
 
 // publish this audit message when account add new email
-func AccountAddEmailAudit(payload *AccountAddEmailAuditPayload) error {
+func AccountAddEmail(payload *AccountAddEmailPayload) error {
 	if payload == nil {
 		return fmt.Errorf("payload is empty")
 	}
@@ -25,5 +22,5 @@ func AccountAddEmailAudit(payload *AccountAddEmailAuditPayload) error {
 		return err
 	}
 	// send the request
-	return publishAudit(AuditAccountAddEmail, payload)
+	return publish(KAccountAddEmail, payload)
 }

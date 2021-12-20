@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Kross IAM Project.
 // https://github.com/krossdev/iam-ms/blob/main/LICENSE
 //
-package action
+package actions
 
 import (
 	"html/template"
@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/krossdev/iam-ms/msc"
+	"github.com/krossdev/iam-ms/msc/action"
 	"github.com/krossdev/iam-ms/mss/email"
 
 	"github.com/mitchellh/mapstructure"
@@ -19,13 +19,13 @@ import (
 
 // data pass to template execute
 type SendVerifyEmailTemplateData struct {
-	msc.SendVerifyEmailActionPayload
+	action.SendVerifyEmailPayload
 	TemplateData email.TemplateData
 }
 
 // send-verify-email action handler
 func SendVerifyEmailHandler(p interface{}, c interface{}, l *logrus.Entry) (interface{}, error) {
-	var payload msc.SendVerifyEmailActionPayload
+	var payload action.SendVerifyEmailPayload
 
 	// convert map to struct
 	if err := mapstructure.Decode(p, &payload); err != nil {

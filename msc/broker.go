@@ -9,25 +9,31 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Broker struct {
+type natsBroker struct {
 	servers []string
 	conn    *nats.EncodedConn
 }
 
-var broker *Broker
+var broker *natsBroker
 
-// create unique broker
-func createBroker(servers []string) {
+// return broker
+func Borker() *natsBroker {
+	return broker
+}
+
+// createBroker create unique broker
+func createBroker(servers []string) *natsBroker {
 	if broker != nil {
 		broker.disconnect()
 	}
-	broker = &Broker{
+	broker = &natsBroker{
 		servers: servers,
 	}
+	return broker
 }
 
 // connect to message server
-func (b *Broker) connect() error {
+func (b *natsBroker) connect() error {
 	opts := nats.GetDefaultOptions()
 
 	// connection options
@@ -57,10 +63,10 @@ func (b *Broker) connect() error {
 }
 
 // disconnect from message server
-func (b *Broker) disconnect() {
+func (b *natsBroker) disconnect() {
 	if b.conn != nil && b.conn.Conn.IsConnected() {
 		if err := b.conn.Drain(); err != nil {
-			logger.WithError(err).Warn("drain error")
+			Logger.WithError(err).Warn("drain error")
 		}
 		b.conn.Close()
 	}
@@ -70,12 +76,12 @@ func (b *Broker) disconnect() {
 // this size limit is set by nats server, client cannot modify it.
 // before send large message(like email attachment), client may needs to
 // check if the message size is exceed the payload size limit.
-func (b *Broker) maxPayloadSize() int64 {
+func (b *natsBroker) maxPayloadSize() int64 {
 	return b.conn.Conn.MaxPayload()
 }
 
 // request is a wrapper to nats.Conn.Reqeust
-func (b *Broker) request(subject string, payload interface{}) (interface{}, error) {
+func (b *natsBroker) Request(subject string, payload interface{}) (interface{}, error) {
 	if b.conn == nil || !b.conn.Conn.IsConnected() {
 		if err := b.connect(); err != nil {
 			return nil, err
@@ -83,7 +89,7 @@ func (b *Broker) request(subject string, payload interface{}) (interface{}, erro
 	}
 	qt := makeRequest(payload)
 
-	l := logger.WithFields(logrus.Fields{
+	l := Logger.WithFields(logrus.Fields{
 		"version": qt.Version,
 		"time":    qt.Time,
 		"reqid":   qt.ReqId,
@@ -115,7 +121,7 @@ func (b *Broker) request(subject string, payload interface{}) (interface{}, erro
 }
 
 // publish is a wrapper to nats.Conn.Publish
-func (b *Broker) publish(subject string, payload interface{}) error {
+func (b *natsBroker) Publish(subject string, payload interface{}) error {
 	if b.conn == nil || !b.conn.Conn.IsConnected() {
 		if err := b.connect(); err != nil {
 			return err
@@ -123,7 +129,7 @@ func (b *Broker) publish(subject string, payload interface{}) error {
 	}
 	qt := makeRequest(payload)
 
-	l := logger.WithFields(logrus.Fields{
+	l := Logger.WithFields(logrus.Fields{
 		"version": qt.Version,
 		"time":    qt.Time,
 		"reqid":   qt.ReqId,

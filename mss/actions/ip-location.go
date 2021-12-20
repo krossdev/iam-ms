@@ -1,13 +1,13 @@
 // Copyright (c) 2021 Kross IAM Project.
 // https://github.com/krossdev/iam-ms/blob/main/LICENSE
 //
-package action
+package actions
 
 import (
 	"fmt"
 	"net"
 
-	"github.com/krossdev/iam-ms/msc"
+	"github.com/krossdev/iam-ms/msc/action"
 	"github.com/krossdev/iam-ms/mss/config"
 	"github.com/krossdev/iam-ms/mss/geoip"
 
@@ -33,7 +33,7 @@ func isLookupable(ipaddr string) error {
 }
 
 func IPLocationHandler(p interface{}, c interface{}, l *logrus.Entry) (interface{}, error) {
-	var payload msc.IPLocationActionPayload
+	var payload action.IPLocationPayload
 	var conf config.ActionIPLocation
 
 	// convert map to struct
@@ -61,7 +61,7 @@ func ipLocationWithGeoip(ipaddr string, locale string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	reply := msc.IPLocationActionReply{
+	reply := action.IPLocationReply{
 		Continent: city.Continent(),
 		Country:   city.Country(),
 		City:      city.Name(),

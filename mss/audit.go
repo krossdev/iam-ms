@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/krossdev/iam-ms/msc"
-	"github.com/krossdev/iam-ms/mss/audit"
+	"github.com/krossdev/iam-ms/mss/audits"
 	"github.com/krossdev/iam-ms/mss/config"
 	"github.com/krossdev/iam-ms/mss/xlog"
 
@@ -31,7 +31,7 @@ func subscribeAudit(conf *config.ServiceAudits) error {
 			return
 		}
 		// dispatch
-		if err := audit.Handler(subject, qt.Payload, conf, logger); err != nil {
+		if err := audits.Handler(subject, qt.Payload, conf, logger); err != nil {
 			logger.WithError(err).Errorf("failed to process audit message %s", subject)
 		}
 		logger.Infof("%s is done!", subject)

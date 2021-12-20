@@ -1,12 +1,14 @@
-package msc
+package action
 
 import (
 	"fmt"
 	"net/mail"
 	"net/url"
+
+	"github.com/pkg/errors"
 )
 
-type SendVerifyEmailActionPayload struct {
+type SendVerifyEmailPayload struct {
 	Subject string `json:"subject"` // mail subject
 	Userid  string `json:"userid"`  // recipient name
 	To      string `json:"to"`      // recipient address
@@ -16,13 +18,13 @@ type SendVerifyEmailActionPayload struct {
 }
 
 // Ask message services to send a verify email
-func SendVerifyEmailAction(payload *SendVerifyEmailActionPayload) error {
+func SendVerifyEmail(payload *SendVerifyEmailPayload) error {
 	if payload == nil {
 		return fmt.Errorf("payload is empty")
 	}
 	// validation to address
 	if _, err := mail.ParseAddress(payload.To); err != nil {
-		return err
+		return errors.Wrapf(err, "parse ip(%s) error", payload.To)
 	}
 	// validation href
 	u, err := url.Parse(payload.Href)
@@ -30,9 +32,9 @@ func SendVerifyEmailAction(payload *SendVerifyEmailActionPayload) error {
 		return err
 	}
 	if !u.IsAbs() {
-		return fmt.Errorf("verify url invalid")
+		return fmt.Errorf("verify url(%s) invalid", payload.Href)
 	}
 	// send the request
-	_, err = requestAction(ActionSendVerifyEmail, payload)
+	_, err = request(KSendVerifyEmail, payload)
 	return err
 }

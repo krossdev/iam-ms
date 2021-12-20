@@ -9,7 +9,7 @@ import (
 )
 
 // semantic versioning, https://semver.org
-const Version = "0.0.3"
+const Version = "0.0.4"
 
 const (
 	SubjectAction = "kiam.console.action"
@@ -19,10 +19,9 @@ const (
 
 // request data
 type Request struct {
-	Version string `json:"version"` // protocol version
-	Time    int64  `json:"time"`    // request timestamp, in microsecond
-	ReqId   string `json:"reqid"`   // request id, unique
-	// Action  string      `json:"action"`  // action
+	Version string      `json:"version"` // protocol version
+	Time    int64       `json:"time"`    // request timestamp, in microsecond
+	ReqId   string      `json:"reqid"`   // request id, unique
 	Payload interface{} `json:"payload"` // payload
 }
 

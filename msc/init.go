@@ -1,9 +1,20 @@
 package msc
 
-// Initial setup message broker
-func Initial(servers []string) {
+import "github.com/sirupsen/logrus"
+
+// the default Logger has no any configuration(like log to file...),
+// app should replace it with SetLogger()
+var Logger = logrus.StandardLogger().WithField("realm", "ms")
+
+// replace the default logger with customized logger
+func SetLogger(e *logrus.Entry) {
+	Logger = e
+}
+
+// Connect to message broker
+func Connect(servers []string) {
 	if len(servers) == 0 {
-		logger.Panic("no servers give to connect")
+		Logger.Panic("no servers give to connect")
 	}
 	createBroker(servers)
 
@@ -14,14 +25,14 @@ func Initial(servers []string) {
 	// try to make connection later when publish data to message server,
 	// if that failed again, then report error to app.
 	if err := broker.connect(); err != nil {
-		logger.Warnf("failed to connect: %v", err)
+		Logger.Warnf("failed to connect: %v", err)
 		return
 	}
-	logger.Tracef("message broker connected")
+	Logger.Tracef("message broker connected")
 }
 
-// Deinitial clean up message broker
-func Deinitial() {
+// Disconnect connection from message broker
+func Disconnect() {
 	if broker != nil {
 		broker.disconnect()
 	}

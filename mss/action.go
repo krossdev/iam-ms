@@ -7,7 +7,8 @@ import (
 	"fmt"
 
 	"github.com/krossdev/iam-ms/msc"
-	"github.com/krossdev/iam-ms/mss/action"
+	"github.com/krossdev/iam-ms/msc/action"
+	"github.com/krossdev/iam-ms/mss/actions"
 	"github.com/krossdev/iam-ms/mss/config"
 	"github.com/krossdev/iam-ms/mss/xlog"
 
@@ -69,20 +70,20 @@ func subscribeAction(action string, handler ActionHandlerFunc, conf interface{})
 // subscribe actions
 func subscribeActionsWithConfig(c *config.ServiceActions) error {
 	handlers := map[string]ActionHandlerFunc{
-		msc.ActionIpLocation:      action.IPLocationHandler,
-		msc.ActionSendVerifyEmail: action.SendVerifyEmailHandler,
+		action.KIPLocation:      actions.IPLocationHandler,
+		action.KSendVerifyEmail: actions.SendVerifyEmailHandler,
 	}
 	subscribe := func(action string, conf interface{}) error {
 		return subscribeAction(action, handlers[action], conf)
 	}
 	// scbscribe action which enabled
 	if c.IPLocation.Subscribe {
-		if err := subscribe(msc.ActionIpLocation, &c.IPLocation); err != nil {
+		if err := subscribe(action.KIPLocation, &c.IPLocation); err != nil {
 			return err
 		}
 	}
 	if c.SendVerifyEmail.Subscribe {
-		if err := subscribe(msc.ActionSendVerifyEmail, &c.SendVerifyEmail); err != nil {
+		if err := subscribe(action.KSendVerifyEmail, &c.SendVerifyEmail); err != nil {
 			return err
 		}
 	}

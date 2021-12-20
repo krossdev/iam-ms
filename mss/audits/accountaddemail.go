@@ -1,7 +1,7 @@
-package audit
+package audits
 
 import (
-	"github.com/krossdev/iam-ms/msc"
+	"github.com/krossdev/iam-ms/msc/audit"
 	"github.com/krossdev/iam-ms/mss/config"
 
 	"github.com/mitchellh/mapstructure"
@@ -9,11 +9,11 @@ import (
 )
 
 func init() {
-	handlers[msc.AuditAccountAddEmail] = accountAddEmail
+	handlers[audit.KAccountAddEmail] = accountAddEmail
 }
 
 func accountAddEmail(p interface{}, c *config.ServiceAudits, l *logrus.Entry) error {
-	var payload msc.AccountAddEmailAuditPayload
+	var payload audit.AccountAddEmailPayload
 
 	// convert map to struct
 	if err := mapstructure.Decode(p, &payload); err != nil {
