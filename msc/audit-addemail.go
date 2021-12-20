@@ -5,34 +5,25 @@ package msc
 
 import (
 	"fmt"
+	"net/mail"
 )
 
-type AccountAddEmailPayload struct {
-	Subject string `json:"subject"` // mail subject
-	Name    string `json:"name"`    // recipient name
-	To      string `json:"to"`      // recipient address
-	Href    string `json:"href"`    // verify url
-	Locale  string `json:"locale"`  // i18n locale
-	Expire  string `json:"expire"`  // expire
+type AccountAddEmailAuditPayload struct {
+	Userid string   `json:"userid"` // user id(name)
+	Email  string   `json:"email"`  // new email address
+	To     []string `json:"to"`     // recipient addresses
+	Locale string   `json:"locale"` // i18n locale
 }
 
-// Publish account add email audit
-func AccountAddEmail(payload *AccountAddEmailPayload) error {
+// publish this audit message when account add new email
+func AccountAddEmailAudit(payload *AccountAddEmailAuditPayload) error {
 	if payload == nil {
 		return fmt.Errorf("payload is empty")
 	}
-	// // validation to address
-	// if _, err := mail.ParseAddress(payload.To); err != nil {
-	// 	return err
-	// }
-	// // validation href
-	// u, err := url.Parse(payload.Href)
-	// if err != nil {
-	// 	return err
-	// }
-	// if !u.IsAbs() {
-	// 	return fmt.Errorf("verify url invalid")
-	// }
+	// validation to address
+	if _, err := mail.ParseAddress(payload.Email); err != nil {
+		return err
+	}
 	// send the request
-	return publishAudit(EventAccountAddEmail, payload)
+	return publishAudit(AuditAccountAddEmail, payload)
 }

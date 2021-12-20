@@ -13,13 +13,13 @@ func init() {
 }
 
 func accountAddEmail(p interface{}, c *config.ServiceAudits, l *logrus.Entry) error {
-	var payload msc.AccountAddEmailPayload
+	var payload msc.AccountAddEmailAuditPayload
 
 	// convert map to struct
 	if err := mapstructure.Decode(p, &payload); err != nil {
 		return err
 	}
 
-	l.Infof("payload %v", payload)
+	l.Debugf("payload %v", payload)
 	return nil
 }

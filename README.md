@@ -9,7 +9,7 @@ it is send a request to the message services, ask it to complete the job.
 
 ## Why message services
 
-Send message from KrossIAM itself is not a technology problem and more easy,
+Send message from KrossIAM itself is not a technology problem and even more easy,
 the problem is lost the flexibility of message processing.
 
 For example, when some event happen, like user account login abnormal,
@@ -37,8 +37,8 @@ one more thing, nats has authentication and authoriztion bulit in.
 
 ## Message type, async and sync
 
-KrossIAM message has 3 types: `action`, `event`, and `audit`, where `action`
-is **sync** message, `event` and `audit` is **async** message.
+KrossIAM message has 3 types: `action`, `notice`, and `audit`, where `action`
+is **sync** message, `notice` and `audit` is **async** message.
 
 `action` is KrossIAM ask message services to do something, there must
 has one and only one subscriber to the action, in other words, the action
@@ -49,12 +49,12 @@ until action finish or timeout.
 
 example action includes send email, send sms, and so on.
 
-`event` is *async* message, there may be any number subscriber(include 0),
-KrossIAM just publish the event to the message services, does not care about
+`notice` is *async* message, there may be any number subscriber(include 0),
+KrossIAM just publish the notice to the message services, does not care about
 the result.
 
-`audit` is basically same as `event`, but used for publish more sensitive
-information, set audit and event on difference nats *subject*, combine with
+`audit` is basically same as `notice`, but used for publish more sensitive
+information, set audit and notice on difference nats *subject*, combine with
 nats authorization, we can limit which app has permissions to subscribe.
 
 ## MSS and MSC
@@ -63,7 +63,7 @@ This repo has 2 directory, `mss` and `msc`, mss stand for *Message Services Serv
 and msc stand for *Message Service Client*.
 
 **msc** is a `go` module, has integrated into KrossIAM app. **mss** is a
-standalone app. both of them is nats client.
+standalone app. both of them are nats client.
 
 message flow:
 

@@ -5,7 +5,7 @@ message server as long as the communication protocol is compatible.
 
 ## Communication Protocol
 
-The communication protocol is simple, unfortunately, there is currently no
-relevant documentation.
+The communication protocol is simple.
+*unfortunately, there is currently no documentation yet*.
 
 TODO...

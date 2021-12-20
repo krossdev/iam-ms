@@ -60,7 +60,7 @@ func subscribeAction(action string, handler ActionHandlerFunc, conf interface{})
 	}
 	subject := fmt.Sprintf("%s.%s", msc.SubjectAction, action)
 
-	xlog.X.Tracef("subscribed action message on %s ...", subject)
+	xlog.X.Tracef("subscribed action messages on %s ...", subject)
 
 	_, err := conn.Subscribe(subject, actionHandler)
 	return err

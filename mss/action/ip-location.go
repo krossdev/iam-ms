@@ -33,7 +33,7 @@ func isLookupable(ipaddr string) error {
 }
 
 func IPLocationHandler(p interface{}, c interface{}, l *logrus.Entry) (interface{}, error) {
-	var payload msc.IPLocationPayload
+	var payload msc.IPLocationActionPayload
 	var conf config.ActionIPLocation
 
 	// convert map to struct
@@ -46,6 +46,8 @@ func IPLocationHandler(p interface{}, c interface{}, l *logrus.Entry) (interface
 	if err := isLookupable(payload.IpAddr); err != nil {
 		return nil, err
 	}
+
+	// lookup location with geoip database
 	if conf.Engine == config.IPLocationEngineGeoip {
 		return ipLocationWithGeoip(payload.IpAddr, payload.Locale)
 	}
@@ -59,7 +61,7 @@ func ipLocationWithGeoip(ipaddr string, locale string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	reply := msc.IPLocationReply{
+	reply := msc.IPLocationActionReply{
 		Continent: city.Continent(),
 		Country:   city.Country(),
 		City:      city.Name(),

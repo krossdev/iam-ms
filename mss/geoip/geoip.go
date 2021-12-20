@@ -19,6 +19,6 @@ func Setup(conf *config.Geoip) error {
 	}
 	geoipConfig = conf
 
-	xlog.X.Tracef("use geoip database %s", conf.Path)
+	xlog.X.Debugf("use geoip database %s", conf.Path)
 	return db.Close()
 }

@@ -6,9 +6,9 @@ import (
 	"net/url"
 )
 
-type SendVerifyEmailPayload struct {
+type SendVerifyEmailActionPayload struct {
 	Subject string `json:"subject"` // mail subject
-	Name    string `json:"name"`    // recipient name
+	Userid  string `json:"userid"`  // recipient name
 	To      string `json:"to"`      // recipient address
 	Href    string `json:"href"`    // verify url
 	Locale  string `json:"locale"`  // i18n locale
@@ -16,7 +16,7 @@ type SendVerifyEmailPayload struct {
 }
 
 // Ask message services to send a verify email
-func SendVerifyEmail(payload *SendVerifyEmailPayload) error {
+func SendVerifyEmailAction(payload *SendVerifyEmailActionPayload) error {
 	if payload == nil {
 		return fmt.Errorf("payload is empty")
 	}

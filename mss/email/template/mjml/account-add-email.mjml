@@ -1,7 +1,6 @@
 <mjml lang="en">
   <mj-head>
     <mj-include path="./component/head.mjml" />
-    <mj-preview>{{.Expire}}.</mj-preview>
   </mj-head>
   <mj-body>
     <mj-include path="./component/header.mjml" />

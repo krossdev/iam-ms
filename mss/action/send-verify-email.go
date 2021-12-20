@@ -19,13 +19,13 @@ import (
 
 // data pass to template execute
 type SendVerifyEmailTemplateData struct {
-	msc.SendVerifyEmailPayload
+	msc.SendVerifyEmailActionPayload
 	TemplateData email.TemplateData
 }
 
 // send-verify-email action handler
 func SendVerifyEmailHandler(p interface{}, c interface{}, l *logrus.Entry) (interface{}, error) {
-	var payload msc.SendVerifyEmailPayload
+	var payload msc.SendVerifyEmailActionPayload
 
 	// convert map to struct
 	if err := mapstructure.Decode(p, &payload); err != nil {

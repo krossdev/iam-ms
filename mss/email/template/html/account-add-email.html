@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh_CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
   <title>
@@ -97,9 +97,6 @@
 </head>
 
 <body style="word-spacing:normal;">
-  <div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
-    {{.Expire}}。
-  </div>
   <div style="">
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     <div style="margin:0px auto;max-width:600px;">
@@ -145,12 +142,12 @@
                   <tbody>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:16px;line-height:1.5;text-align:left;color:#000000;">你好 {{.Userid}}!</div>
+                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:15px;line-height:1.5;text-align:left;color:#000000;">Hey {{.Userid}}!</div>
                       </td>
                     </tr>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:15px;line-height:1.5;text-align:left;color:#000000;">为了保护你的 KrossIAM 账户安全，我们需要验证你的邮箱地址: <a href="mailto:{{.To}}">{{.To}}</a>。</div>
+                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:15px;line-height:1.5;text-align:left;color:#000000;">To secure your KrossIAM account, we just need to verify your email address: <a href="mailto:{{.To}}">{{.To}}</a>.</div>
                       </td>
                     </tr>
                     <tr>
@@ -159,7 +156,7 @@
                           <tbody>
                             <tr>
                               <td align="center" bgcolor="#FF00AF" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:10px 25px;background:#FF00AF;" valign="middle">
-                                <a href="{{.Href}}" style="display:inline-block;background:#FF00AF;color:#ffff00;font-family:Arial;font-size:16px;font-weight:500;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"> 验证邮箱地址 </a>
+                                <a href="{{.Href}}" style="display:inline-block;background:#FF00AF;color:#ffff00;font-family:Arial;font-size:16px;font-weight:500;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:3px;" target="_blank"> Verify email address </a>
                               </td>
                             </tr>
                           </tbody>
@@ -200,33 +197,14 @@
                     </tr>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:12px;line-height:1.5;text-align:left;color:#888888;">按钮不起作用？请将下面的链接粘贴到浏览器中: <a href="{{.Href}}">{{.Href}}</a></div>
+                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:12px;line-height:1.5;text-align:left;color:#888888;">Button not working? Paste the following link into your browser: <a href="{{.Href}}">{{.Href}}</a></div>
                       </td>
                     </tr>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:12px;line-height:1.5;text-align:left;color:#888888;">之所以收到这封邮件是因为你最近创建了一个新的 KrossIAM 账户或者添加了新的邮箱地址到你的账户。 如果你没有进行以上操作，请忽略此邮件。</div>
+                        <div style="font-family:Verdana, Arial, Calibri, Times New Roman;font-size:12px;line-height:1.5;text-align:left;color:#888888;">You're receiving this email because you recently created a new KrossIAM account or added a new email address to your account. If this wasn't you, please ignore this email.</div>
                       </td>
                     </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table><![endif]-->
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-    <div style="margin:0px auto;max-width:600px;">
-      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-        <tbody>
-          <tr>
-            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
-              <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
-              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                  <tbody>
                   </tbody>
                 </table>
               </div>

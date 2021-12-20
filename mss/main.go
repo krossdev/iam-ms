@@ -67,7 +67,7 @@ func main() {
 		}
 	}()
 
-	xlog.X.Infof("%d is ready, wait for incoming message...", os.Getpid())
+	xlog.X.Infof("%d is ready, wait for incoming messages...", os.Getpid())
 	wg.Wait()
 }
 

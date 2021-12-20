@@ -13,7 +13,7 @@ const Version = "0.0.3"
 
 const (
 	SubjectAction = "kiam.console.action"
-	SubjectEvent  = "kiam.console.event"
+	SubjectNotice = "kiam.console.notice"
 	SubjectAudit  = "kiam.console.audit"
 )
 

@@ -39,7 +39,7 @@ func subscribeAudit(conf *config.ServiceAudits) error {
 	// subscribe all audit messages with wildcard
 	subject := fmt.Sprintf("%s.>", msc.SubjectAudit)
 
-	xlog.X.Tracef("subscribed audit message on %s ...", subject)
+	xlog.X.Tracef("subscribed audit messages on %s ...", subject)
 
 	_, err := conn.Subscribe(subject, auditHandler)
 	return err

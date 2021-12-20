@@ -7,7 +7,7 @@
     <mj-include path="../component/header.mjml" />
     <mj-section padding-top="0px">
       <mj-column>
-        <mj-text font-size="16px">你好 {{.Name}}!</mj-text>
+        <mj-text font-size="16px">你好 {{.Userid}}!</mj-text>
         <mj-text>
           为了保护你的 KrossIAM 账户安全，我们需要验证你的邮箱地址:
           <a href="mailto:{{.To}}">{{.To}}</a>。
