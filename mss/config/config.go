@@ -36,18 +36,18 @@ type ServiceActions struct {
 	SendVerifyEmail ActionSendVerifyEmail `yaml:"send_verify_email"`
 }
 
-type ServiceAudit struct {
+type ServiceAudits struct {
 	Subscribe bool `yaml:"subscribe"`
 }
 
-type ServiceEvent struct {
+type ServiceEvents struct {
 	Subscribe bool `yaml:"subscribe"`
 }
 
 // Service
 type Service struct {
-	Audit   ServiceAudit   `yaml:"audit"`
-	Event   ServiceEvent   `yaml:"event"`
+	Audits  ServiceAudits  `yaml:"audits"`
+	Events  ServiceEvents  `yaml:"events"`
 	Actions ServiceActions `yaml:"actions"`
 }
 

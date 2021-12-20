@@ -30,14 +30,14 @@ brokers:
 # Services
 #
 service:
-  # Subscribe to event message
+  # Subscribe to event messages
   #
-  event:
+  events:
     subscribe: true
 
-  # Subscribe to audit message
+  # Subscribe to audit messages
   #
-  audit:
+  audits:
     subscribe: true
 
   # Subscribe to action messages

@@ -5,7 +5,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/krossdev/iam-ms/msc"
 	"github.com/krossdev/iam-ms/mss/audit"
@@ -15,10 +14,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type AuditHandlerFunc func(payload interface{}, params interface{}, l *logrus.Entry) error
-
-// subscribe to action subject
-func subscribeAudit(params interface{}) error {
+// subscribe to audit messages
+func subscribeAudit(conf *config.ServiceAudits) error {
 	auditHandler := func(subject string, reply string, qt *msc.Request) {
 		logger := xlog.X.WithFields(logrus.Fields{
 			"version": qt.Version,
@@ -26,35 +23,32 @@ func subscribeAudit(params interface{}) error {
 			"reqid":   qt.ReqId,
 			"subject": subject,
 		})
-		logger.Infof("receive audit on %s", subject)
+		logger.Infof("receive audit message on %s", subject)
 
 		// check request
 		if perr := checkRequest(qt); perr != nil {
-			logger.WithError(perr.err).Error("audit request validation error")
+			logger.WithError(perr.err).Error("validate audit request error")
 			return
 		}
-		// call handler
-		arr := strings.Split(subject, ".")
-		err := audit.Handler(arr[len(arr)-1], qt.Payload, params, logger)
-		// err := handler(qt.Payload, params, logger)
-		if err != nil {
-			logger.WithError(err).Errorf("audit %s execute error", subject)
-			return
+		// dispatch
+		if err := audit.Handler(subject, qt.Payload, conf, logger); err != nil {
+			logger.WithError(err).Errorf("failed to process audit message %s", subject)
 		}
-		logger.Infof("%s is done!")
+		logger.Infof("%s is done!", subject)
 	}
+	// subscribe all audit messages with wildcard
 	subject := fmt.Sprintf("%s.>", msc.SubjectAudit)
 
-	xlog.X.Tracef("subscribed on %s ...", subject)
+	xlog.X.Tracef("subscribed audit message on %s ...", subject)
 
 	_, err := conn.Subscribe(subject, auditHandler)
 	return err
 }
 
-// subscribe audit
-func subscribeAuditWithConfig(c *config.ServiceAudit) error {
-	if c.Subscribe {
-		return subscribeAudit(c)
+// subscribe audit messages
+func subscribeAuditsWithConfig(c *config.ServiceAudits) error {
+	if !c.Subscribe {
+		return nil
 	}
-	return nil
+	return subscribeAudit(c)
 }

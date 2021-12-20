@@ -127,8 +127,9 @@ func (b *Broker) publish(subject string, payload interface{}) error {
 		"version": qt.Version,
 		"time":    qt.Time,
 		"reqid":   qt.ReqId,
+		"subject": subject,
 	})
-	l.Tracef("publish to %s", subject)
+	l.Tracef("publish message to %s", subject)
 
-	return b.conn.Publish(subject, payload)
+	return b.conn.Publish(subject, &qt)
 }

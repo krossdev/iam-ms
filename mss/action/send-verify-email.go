@@ -24,7 +24,7 @@ type SendVerifyEmailTemplateData struct {
 }
 
 // send-verify-email action handler
-func SendVerifyEmailHandler(p interface{}, params interface{}, l *logrus.Entry) (interface{}, error) {
+func SendVerifyEmailHandler(p interface{}, c interface{}, l *logrus.Entry) (interface{}, error) {
 	var payload msc.SendVerifyEmailPayload
 
 	// convert map to struct

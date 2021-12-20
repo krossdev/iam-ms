@@ -32,21 +32,21 @@ func isLookupable(ipaddr string) error {
 	return nil
 }
 
-func IPLocationHandler(p interface{}, a interface{}, l *logrus.Entry) (interface{}, error) {
+func IPLocationHandler(p interface{}, c interface{}, l *logrus.Entry) (interface{}, error) {
 	var payload msc.IPLocationPayload
-	var params config.ActionIPLocation
+	var conf config.ActionIPLocation
 
 	// convert map to struct
 	if err := mapstructure.Decode(p, &payload); err != nil {
 		return nil, err
 	}
-	if err := mapstructure.Decode(a, &params); err != nil {
+	if err := mapstructure.Decode(c, &conf); err != nil {
 		return nil, err
 	}
 	if err := isLookupable(payload.IpAddr); err != nil {
 		return nil, err
 	}
-	if params.Engine == config.IPLocationEngineGeoip {
+	if conf.Engine == config.IPLocationEngineGeoip {
 		return ipLocationWithGeoip(payload.IpAddr, payload.Locale)
 	}
 

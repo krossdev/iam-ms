@@ -14,10 +14,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ActionHandlerFunc func(payload interface{}, params interface{}, l *logrus.Entry) (interface{}, error)
+type ActionHandlerFunc func(payload interface{}, conf interface{}, l *logrus.Entry) (interface{}, error)
 
 // subscribe to action subject
-func subscribeAction(action string, handler ActionHandlerFunc, params interface{}) error {
+func subscribeAction(action string, handler ActionHandlerFunc, conf interface{}) error {
 	actionHandler := func(subject string, reply string, qt *msc.Request) {
 		logger := xlog.X.WithFields(logrus.Fields{
 			"version": qt.Version,
@@ -47,7 +47,7 @@ func subscribeAction(action string, handler ActionHandlerFunc, params interface{
 			return
 		}
 		// call handler
-		payload, err := handler(qt.Payload, params, logger)
+		payload, err := handler(qt.Payload, conf, logger)
 		if err != nil {
 			logger.WithError(err).Errorf("action %s execute error", subject)
 			replyTo(msc.ReplyError, err.Error(), nil)
@@ -60,7 +60,7 @@ func subscribeAction(action string, handler ActionHandlerFunc, params interface{
 	}
 	subject := fmt.Sprintf("%s.%s", msc.SubjectAction, action)
 
-	xlog.X.Tracef("subscribed on %s ...", subject)
+	xlog.X.Tracef("subscribed action message on %s ...", subject)
 
 	_, err := conn.Subscribe(subject, actionHandler)
 	return err
@@ -72,8 +72,8 @@ func subscribeActionsWithConfig(c *config.ServiceActions) error {
 		msc.ActionIpLocation:      action.IPLocationHandler,
 		msc.ActionSendVerifyEmail: action.SendVerifyEmailHandler,
 	}
-	subscribe := func(action string, params interface{}) error {
-		return subscribeAction(action, handlers[action], params)
+	subscribe := func(action string, conf interface{}) error {
+		return subscribeAction(action, handlers[action], conf)
 	}
 	// scbscribe action which enabled
 	if c.IPLocation.Subscribe {

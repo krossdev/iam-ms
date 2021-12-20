@@ -100,8 +100,8 @@ func load() error {
 		return errors.Wrap(err, "failed to subscribe action subject")
 	}
 	// subscribe audit
-	if err = subscribeAuditWithConfig(&conf.Service.Audit); err != nil {
-		return errors.Wrap(err, "failed to subscribe action subject")
+	if err = subscribeAuditsWithConfig(&conf.Service.Audits); err != nil {
+		return errors.Wrap(err, "failed to subscribe audit subject")
 	}
 	return nil
 }
