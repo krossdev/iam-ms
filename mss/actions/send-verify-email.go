@@ -18,7 +18,7 @@ import (
 )
 
 // data pass to template execute
-type SendVerifyEmailTemplateData struct {
+type sendVerifyEmailTemplateData struct {
 	action.SendVerifyEmailPayload
 	TemplateData email.TemplateData
 }
@@ -44,10 +44,10 @@ func SendVerifyEmailHandler(p interface{}, c interface{}, l *logrus.Entry) (inte
 		Title: payload.Subject,
 	}
 	// data to execute template
-	data := SendVerifyEmailTemplateData{payload, templateData}
+	data := sendVerifyEmailTemplateData{payload, templateData}
 
 	// generate mail content
-	content, err := email.ExecTemplate("verify-email", data.Locale, &data)
+	content, err := email.ExecTemplate(email.TVerifyEmail, data.Locale, &data)
 	if err != nil {
 		return nil, err
 	}

@@ -3,7 +3,7 @@
     <mj-title>{{.TemplateData.Title}}</mj-title>
     <mj-attributes>
       <mj-all font-family="Verdana, Arial, Calibri, Times New Roman" />
-      <mj-text font-size="15px" line-height="1.5" />
+      <mj-text font-size="14px" line-height="1.5" />
       <mj-divider border-width="1px" border-color="#eee" />
     </mj-attributes>
     <mj-style>

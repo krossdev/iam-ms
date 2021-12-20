@@ -1,16 +1,16 @@
-<mjml lang="en">
+<mjml lang="zh_CN">
   <mj-head>
-    <mj-include path="./component/head.mjml" />
+    <mj-include path="../component/head.mjml" />
   </mj-head>
   <mj-body>
-    <mj-include path="./component/header.mjml" />
+    <mj-include path="../component/header.mjml" />
     <mj-section padding-top="0px">
       <mj-column>
         <mj-text>Hey {{.Userid}}!</mj-text>
         <mj-text>
-          An email address ({{.NewEmail}}) was added to your KrossIAM account. Visit
+          一个新的邮箱地址添加到了你的 KrossIAM 账号。访问
           <a href="{{.HttpURL}}/account/identity">{{.HttpURL}}/account/identity</a>
-          to review email addresses currently associated with your account.
+          查看当前与你的账号关联的邮箱地址。
         </mj-text>
       </mj-column>
     </mj-section>
@@ -18,8 +18,8 @@
       <mj-column>
         <mj-divider />
         <mj-text font-size="12px" color="#888">
-          You're receiving this email because you recently added a new email address
-          to your account. If this wasn't you, please ignore this email.
+          之所以收到这封邮件是因为你最近添加了新的邮箱地址到你的 KrossIAM 账户。
+          如果你没有进行以上操作，请忽略此邮件。
         </mj-text>
       </mj-column>
     </mj-section>

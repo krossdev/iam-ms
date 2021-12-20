@@ -21,7 +21,8 @@ type TemplateData struct {
 
 // template name constants
 const (
-	TemplateVerifyEmail = "verify-email"
+	TVerifyEmail     = "verify-email"
+	TAccountAddEmail = "account-add-email"
 )
 
 // load template from file, support i18n
