@@ -32,11 +32,13 @@ brokers:
 service:
   # Subscribe to event message
   #
-  event: true
+  event:
+    subscribe: true
 
   # Subscribe to audit message
   #
-  audit: true
+  audit:
+    subscribe: true
 
   # Subscribe to action messages
   #

@@ -5,8 +5,6 @@ package msc
 
 import (
 	"fmt"
-	"net/mail"
-	"net/url"
 )
 
 type AccountAddEmailPayload struct {
@@ -23,18 +21,18 @@ func AccountAddEmail(payload *AccountAddEmailPayload) error {
 	if payload == nil {
 		return fmt.Errorf("payload is empty")
 	}
-	// validation to address
-	if _, err := mail.ParseAddress(payload.To); err != nil {
-		return err
-	}
-	// validation href
-	u, err := url.Parse(payload.Href)
-	if err != nil {
-		return err
-	}
-	if !u.IsAbs() {
-		return fmt.Errorf("verify url invalid")
-	}
+	// // validation to address
+	// if _, err := mail.ParseAddress(payload.To); err != nil {
+	// 	return err
+	// }
+	// // validation href
+	// u, err := url.Parse(payload.Href)
+	// if err != nil {
+	// 	return err
+	// }
+	// if !u.IsAbs() {
+	// 	return fmt.Errorf("verify url invalid")
+	// }
 	// send the request
 	return publishAudit(EventAccountAddEmail, payload)
 }
