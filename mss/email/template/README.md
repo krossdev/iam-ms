@@ -39,7 +39,7 @@ content := fmt.Sprintf(`
 <html>
   <head></head>
   <body>
-    <img src="cid:%s"
+    <img src="cid:%s" />
   </body>
 </html>
 `, logo_cid)
