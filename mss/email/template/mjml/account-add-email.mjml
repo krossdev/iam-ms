@@ -8,10 +8,18 @@
       <mj-column>
         <mj-text>Hey {{.Userid}}!</mj-text>
         <mj-text>
-          An email address ({{.NewEmail}}) was added to your KrossIAM account. Visit
+          An email address ({{.NewEmail}}) was added to your KrossIAM account.
+        </mj-text>
+        <mj-text>
+          Visit
           <a href="{{.HttpURL}}/account/identity">{{.HttpURL}}/account/identity</a>
           to review email addresses currently associated with your account.
         </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding-top="0px" padding-bottom="0px">
+      <mj-column>
+        <mj-text color="#088">KrossIAM Security Team</mj-text>
       </mj-column>
     </mj-section>
     <mj-section padding-top="5px">

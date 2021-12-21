@@ -52,11 +52,15 @@ func accountAddEmail(p interface{}, c *config.ServiceAudits, l *logrus.Entry) er
 	// contract a mail message
 	m := email.HTMLMessage(data.Subject, content)
 
-	for _, t := range payload.MailTo {
+	for i, t := range payload.MailTo {
 		if to, err := mail.ParseAddress(t); err != nil {
-			l.WithError(err).Errorf("parse mail address(%s) error", t)
+			l.WithError(err).Errorf("unable send mail to %s", t)
 		} else {
-			m.AddTO(to)
+			if i == 0 {
+				m.AddTO(to)
+			} else {
+				m.AddCC(to)
+			}
 		}
 	}
 	// inline logo

@@ -7,11 +7,17 @@
     <mj-section padding-top="0px">
       <mj-column>
         <mj-text>Hey {{.Userid}}!</mj-text>
+        <mj-text>一个新的邮箱地址添加到了你的 KrossIAM 账号。</mj-text>
         <mj-text>
-          一个新的邮箱地址添加到了你的 KrossIAM 账号。访问
+          访问
           <a href="{{.HttpURL}}/account/identity">{{.HttpURL}}/account/identity</a>
           查看当前与你的账号关联的邮箱地址。
         </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding-top="0px" padding-bottom="0px">
+      <mj-column>
+        <mj-text color="#088">KrossIAM 安全团队</mj-text>
       </mj-column>
     </mj-section>
     <mj-section padding-top="5px">
