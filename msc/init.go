@@ -2,11 +2,11 @@ package msc
 
 import "github.com/sirupsen/logrus"
 
-// the default Logger has no any configuration(like log to file...),
+// The default Logger has no any configuration(like log to file...),
 // app should replace it with SetLogger()
 var Logger = logrus.StandardLogger().WithField("realm", "ms")
 
-// replace the default logger with customized logger
+// Replace the default logger with customized logger
 func SetLogger(e *logrus.Entry) {
 	Logger = e
 }
@@ -31,7 +31,7 @@ func Connect(servers []string) {
 	Logger.Tracef("message broker connected")
 }
 
-// Disconnect connection from message broker
+// Disconnect from message broker
 func Disconnect() {
 	if broker != nil {
 		broker.disconnect()

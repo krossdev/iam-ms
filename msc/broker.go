@@ -16,7 +16,7 @@ type natsBroker struct {
 
 var broker *natsBroker
 
-// return broker
+// Return broker
 func Borker() *natsBroker {
 	return broker
 }
@@ -80,7 +80,7 @@ func (b *natsBroker) maxPayloadSize() int64 {
 	return b.conn.Conn.MaxPayload()
 }
 
-// request is a wrapper to nats.Conn.Reqeust
+// Request is a wrapper to nats.Conn.Reqeust
 func (b *natsBroker) Request(subject string, payload interface{}) (interface{}, error) {
 	if b.conn == nil || !b.conn.Conn.IsConnected() {
 		if err := b.connect(); err != nil {
@@ -120,7 +120,7 @@ func (b *natsBroker) Request(subject string, payload interface{}) (interface{}, 
 	return rp.Payload, nil
 }
 
-// publish is a wrapper to nats.Conn.Publish
+// Publish is a wrapper to nats.Conn.Publish
 func (b *natsBroker) Publish(subject string, payload interface{}) error {
 	if b.conn == nil || !b.conn.Conn.IsConnected() {
 		if err := b.connect(); err != nil {
