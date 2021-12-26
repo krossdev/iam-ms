@@ -1,6 +1,6 @@
 <mjml>
   <mj-body>
-    <mj-section>
+    <mj-section padding-bottom="0px">
       <mj-column>
         <mj-image src='{{.TemplateData.Logo}}' alt='Logo'
           width='32px' height='32px' align='left'
