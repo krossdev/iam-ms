@@ -4,7 +4,11 @@ import "github.com/nats-io/nats.go"
 
 // asyncErrorHandler sets the async error handler (e.g. slow consumer errors)
 func asyncErrorHandler(c *nats.Conn, s *nats.Subscription, e error) {
-	Logger.WithError(e).Error("Message broker async error")
+	if e != nil {
+		Logger.WithError(e).Error("Message broker async error")
+	} else {
+		Logger.Error("Message broker async error")
+	}
 }
 
 // disconnectedErrorHandler sets the disconnected error handler that is called
@@ -12,7 +16,11 @@ func asyncErrorHandler(c *nats.Conn, s *nats.Subscription, e error) {
 // Disconnected error could be nil, for instance when user explicitly closes the
 // connection.
 func disconnectedErrorHandler(c *nats.Conn, e error) {
-	Logger.WithError(e).Warn("Message broker disconnected")
+	if e != nil {
+		Logger.WithError(e).Warn("Message broker disconnected")
+	} else {
+		Logger.Warn("Message broker disconnected")
+	}
 }
 
 // reconnectedHandler sets the reconnected handler called whenever

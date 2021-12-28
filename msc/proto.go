@@ -9,12 +9,13 @@ import (
 )
 
 // semantic versioning, https://semver.org
-const Version = "0.1.0"
+const Version = "0.1.1"
 
 const (
 	SubjectAction = "kiam.console.action"
 	SubjectNotice = "kiam.console.notice"
 	SubjectAudit  = "kiam.console.audit"
+	SubjectLog    = "kiam.console.log"
 )
 
 // request data

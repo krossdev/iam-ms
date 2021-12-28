@@ -11,7 +11,11 @@ import (
 
 // asyncErrorHandler sets the async error handler (e.g. slow consumer errors)
 func asyncErrorHandler(c *nats.Conn, s *nats.Subscription, e error) {
-	xlog.X.WithError(e).Error("Message broker async error")
+	if e != nil {
+		xlog.X.WithError(e).Error("Message broker async error")
+	} else {
+		xlog.X.Error("Message broker async error")
+	}
 }
 
 // disconnectedErrorHandler sets the disconnected error handler that is called
@@ -19,7 +23,11 @@ func asyncErrorHandler(c *nats.Conn, s *nats.Subscription, e error) {
 // Disconnected error could be nil, for instance when user explicitly closes the
 // connection.
 func disconnectedErrorHandler(c *nats.Conn, e error) {
-	xlog.X.WithError(e).Warn("Message broker disconnected")
+	if e != nil {
+		xlog.X.WithError(e).Warn("Message broker disconnected")
+	} else {
+		xlog.X.Warn("Message broker disconnected")
+	}
 }
 
 // reconnectedHandler sets the reconnected handler called whenever

@@ -32,8 +32,6 @@ func accountAddEmail(p interface{}, c *config.ServiceAudits, l *logrus.Entry) er
 		return err
 	}
 
-	l.Debugf("payload %v", payload)
-
 	// inline logo cid identifer
 	logo_cid := strings.ReplaceAll(uuid.NewString(), "-", "")
 
