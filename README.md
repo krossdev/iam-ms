@@ -37,8 +37,9 @@ one more thing, nats has authentication and authoriztion bulit in.
 
 ## Message type, async and sync
 
-KrossIAM message has 3 types: `action`, `notice`, and `audit`, where `action`
-is **sync** message, `notice` and `audit` is **async** message.
+KrossIAM message has 4 types: `action`, `notice`, `audit` and `log`, 
+where `action` is **sync** message, `notice`, `audit` and `log` is 
+**async** message.
 
 `action` is KrossIAM ask message services to do something, there must
 has one and only one subscriber to the action, in other words, the action
@@ -47,7 +48,8 @@ must be execute exactly once, no more no less.
 `action` is *sync* message, when KrossIAM ask a action, it will be block
 until action finish or timeout.
 
-example action includes send email, send sms, and so on.
+example action includes send email, send sms, and so on. beacuse these
+operates must execute once and only once.
 
 `notice` is *async* message, there may be any number subscriber(include 0),
 KrossIAM just publish the notice to the message services, does not care about
@@ -56,6 +58,8 @@ the result.
 `audit` is basically same as `notice`, but used for publish more sensitive
 information, set audit and notice on difference nats *subject*, combine with
 nats authorization, we can limit which app has permissions to subscribe.
+
+`log` is same as `notice` too, used for publish log message.
 
 ## MSS and MSC
 

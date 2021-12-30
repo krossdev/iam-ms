@@ -19,8 +19,8 @@ type airbrakeHook struct {
 
 func newAirbrakeHook(debug bool, config *config.Log) *airbrakeHook {
 	notifier := gobrake.NewNotifierWithOptions(&gobrake.NotifierOptions{
-		ProjectId:   config.Airbrake.Pid,
-		ProjectKey:  config.Airbrake.Key,
+		ProjectId:   config.AirbrakePid,
+		ProjectKey:  config.AirbrakeKey,
 		Environment: "ms",
 	})
 

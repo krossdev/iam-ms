@@ -343,7 +343,7 @@ func (m *Message) send(mta *config.Mta) error {
 	}
 	to := addrs2strings(false, m.To, m.Cc, m.Bcc)
 
-	if mta.SSLMode {
+	if mta.SSL {
 		return m.sendWithSSL(mta, from, to)
 	}
 	var auth smtp.Auth

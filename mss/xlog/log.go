@@ -52,7 +52,7 @@ func Setup(debug bool, config *config.Log) {
 	}
 
 	// add airbrake hook if enabled
-	if config.Airbrake.Pid != 0 && len(config.Airbrake.Key) > 0 {
+	if config.AirbrakePid != 0 && len(config.AirbrakeKey) > 0 {
 		l.AddHook(newAirbrakeHook(debug, config))
 	}
 	X = l.WithField(FRealm, "main")

@@ -22,7 +22,7 @@ import (
 
 // command line options
 var (
-	configFile = flag.String("c", "./config.yaml", "Configuration `filepath`")
+	configFile = flag.String("c", "./mss.yaml", "Configuration `filepath`")
 	watch      = flag.Bool("watch", false, "Watch configuration file change to reload")
 )
 

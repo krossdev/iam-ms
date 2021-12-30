@@ -18,9 +18,8 @@ log:
   # pid is project id(a number), and key is project key,
   # you can get them from your airbrade account
   #
-  airbrake:
-    pid: project-id
-    key: project-key
+  airbrake_pid: project-id
+  airbrade_key: project-key
 
 # Nats server(s)
 #
@@ -82,8 +81,8 @@ mail:
       host: smtp.host.com
       # smtp port
       port: 465
-      # connection mode
-      sslmode: true
+      # set to true use ssl connectin instead of starttls
+      ssl: true
       # sender address, can contain display name like 'name <sender@host.com>'
       sender: yourname <noreply@host.com>
       # reply to address, optional

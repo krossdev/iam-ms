@@ -11,11 +11,9 @@ import (
 )
 
 type Log struct {
-	Path     string `yaml:"path"`
-	Airbrake struct {
-		Pid int64  `yaml:"pid"`
-		Key string `yaml:"key"`
-	}
+	Path        string `yaml:"path"`
+	AirbrakePid int64  `yaml:"airbrake_pid"`
+	AirbrakeKey string `yaml:"airbrake_key"`
 }
 
 type ActionIPLocation struct {
@@ -55,7 +53,7 @@ type Mta struct {
 	Name    string   `yaml:"name"`
 	Host    string   `yaml:"host"`
 	Port    int      `yaml:"port"`
-	SSLMode bool     `yaml:"sslmode"`
+	SSL     bool     `yaml:"ssl"`
 	Sender  string   `yaml:"sender"`
 	ReplyTo string   `yaml:"replyto"`
 	CC      []string `yaml:"cc"`
