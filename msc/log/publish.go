@@ -9,5 +9,5 @@ func Publish(rq interface{}) error {
 	if b == nil {
 		msc.Logger.Panicf("broker is nil")
 	}
-	return b.PublishLog(msc.SubjectLog, rq)
+	return b.Publish(msc.SubjectLog, rq)
 }

@@ -139,17 +139,3 @@ func (b *natsBroker) Publish(subject string, payload interface{}) error {
 
 	return b.conn.Publish(subject, &qt)
 }
-
-// This function is used to publish log messages, so you cannot record logs
-// in the function, otherwise it will enter an endless loop,
-// log() calls publish(), publish() then calls log(), and so on.
-func (b *natsBroker) PublishLog(subject string, payload interface{}) error {
-	if b.conn == nil || !b.conn.Conn.IsConnected() {
-		if err := b.connect(); err != nil {
-			return err
-		}
-	}
-	qt := makeRequest(payload)
-
-	return b.conn.Publish(subject, &qt)
-}
